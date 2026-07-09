@@ -50,6 +50,7 @@ npx nx dev web             # Start frontend (port 4200)
 - All code and comments in English.
 - **TDD (Test-Driven Development)**: Write tests first, then implement. For each module: create DTOs → write service tests → implement service → write controller tests → implement controller.
 - **Access modifiers**: Always declare explicit `public`, `private`, or `protected` on all class members and methods.
+- **DTO properties**: Always use the definite assignment assertion (`!`) on DTO class properties (e.g., `name!: string`) to satisfy TypeScript strict mode without constructors.
 - NestJS modules follow the pattern: module → controller → service → dto.
 - Prisma schema is the single source of truth for the database.
 - Shared types between api and web go in `libs/shared-types`.

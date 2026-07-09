@@ -10,6 +10,7 @@ import { GeneralExpensesModule } from '../modules/general-expenses/general-expen
 import { CurrentExpensesModule } from '../modules/current-expenses/current-expenses.module';
 import { GoalsModule } from '../modules/goals/goals.module';
 import { WeeklyBalancesModule } from '../modules/weekly-balances/weekly-balances.module';
+import { ImportModule } from '../modules/import/import.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { WeeklyBalancesModule } from '../modules/weekly-balances/weekly-balances
     CurrentExpensesModule,
     GoalsModule,
     WeeklyBalancesModule,
+    ImportModule,
   ],
   controllers: [AppController],
   providers: [AppService],

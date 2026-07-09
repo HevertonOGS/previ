@@ -9,6 +9,7 @@ import {
   ShoppingCart,
   Receipt,
   Target,
+  Upload,
   Settings,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -20,6 +21,7 @@ const navItems = [
   { href: '/gastos-gerais', label: 'Gastos Gerais', icon: Receipt },
   { href: '/gastos-correntes', label: 'Gastos Correntes', icon: ShoppingCart },
   { href: '/metas', label: 'Metas', icon: Target },
+  { href: '/importar', label: 'Importar', icon: Upload },
   { href: '/configuracoes', label: 'Configurações', icon: Settings },
 ];
 
