@@ -1,0 +1,246 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+import { generalExpensesService } from '../../../../../services/general-expenses.service';
+import { referenceService } from '../../../../../services/reference.service';
+import type { Category, ExpenseType } from '../../../../../lib/types';
+import { Button } from '../../../../../components/ui/button';
+import { Input } from '../../../../../components/ui/input';
+import { Label } from '../../../../../components/ui/label';
+import { Select } from '../../../../../components/ui/select';
+import { Textarea } from '../../../../../components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../../components/ui/card';
+
+const PAYMENT_METHODS = [
+  { value: 'DEBIT', label: 'Débito' },
+  { value: 'CREDIT', label: 'Crédito' },
+  { value: 'PIX', label: 'PIX' },
+  { value: 'CASH', label: 'Dinheiro' },
+  { value: 'BENEFITS', label: 'Benefícios' },
+  { value: 'OTHER', label: 'Outro' },
+];
+
+export default function NewGeneralExpensePage() {
+  const router = useRouter();
+  const { id: periodId } = useParams<{ id: string }>();
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [expenseTypes, setExpenseTypes] = useState<ExpenseType[]>([]);
+
+  const [form, setForm] = useState({
+    name: '',
+    expenseTypeId: '',
+    categoryId: '',
+    estimatedAmount: '',
+    actualAmount: '',
+    expectedPayAt: '',
+    paidAt: '',
+    status: 'ESTIMATED' as 'ESTIMATED' | 'PENDING' | 'PAID',
+    paymentMethod: '' as string,
+    notes: '',
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    Promise.all([referenceService.categories(), referenceService.expenseTypes()])
+      .then(([cats, types]) => {
+        setCategories(cats);
+        setExpenseTypes(types);
+        setForm((prev) => ({
+          ...prev,
+          categoryId: cats[0]?.id ?? '',
+          expenseTypeId: types[0]?.id ?? '',
+        }));
+      })
+      .catch(() => {});
+  }, []);
+
+  function set(field: string, value: string) {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await generalExpensesService.create({
+        periodId,
+        name: form.name,
+        expenseTypeId: form.expenseTypeId,
+        categoryId: form.categoryId,
+        estimatedAmount: form.estimatedAmount,
+        actualAmount: form.actualAmount || null,
+        expectedPayAt: form.expectedPayAt || null,
+        paidAt: form.paidAt || null,
+        status: form.status,
+        paymentMethod: (form.paymentMethod || null) as never,
+        notes: form.notes || null,
+      });
+      router.push(`/periodos/${periodId}/gastos-gerais`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao salvar gasto.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-6 p-8 max-w-lg">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" asChild>
+          <Link href={`/periodos/${periodId}/gastos-gerais`}><ArrowLeft className="h-4 w-4" /></Link>
+        </Button>
+        <h1 className="text-2xl font-bold">Novo Gasto Geral</h1>
+      </div>
+
+      <Card>
+        <CardHeader><CardTitle className="text-base">Dados do gasto</CardTitle></CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="name">Descrição *</Label>
+              <Input
+                id="name"
+                placeholder="Ex: Aluguel, Internet, etc."
+                value={form.name}
+                onChange={(e) => set('name', e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="expenseTypeId">Tipo *</Label>
+                <Select
+                  id="expenseTypeId"
+                  value={form.expenseTypeId}
+                  onChange={(e) => set('expenseTypeId', e.target.value)}
+                  required
+                >
+                  {expenseTypes.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="categoryId">Categoria *</Label>
+                <Select
+                  id="categoryId"
+                  value={form.categoryId}
+                  onChange={(e) => set('categoryId', e.target.value)}
+                  required
+                >
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="estimatedAmount">Valor estimado (R$) *</Label>
+                <Input
+                  id="estimatedAmount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0,00"
+                  value={form.estimatedAmount}
+                  onChange={(e) => set('estimatedAmount', e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="actualAmount">Valor pago (R$)</Label>
+                <Input
+                  id="actualAmount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0,00"
+                  value={form.actualAmount}
+                  onChange={(e) => set('actualAmount', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="expectedPayAt">Vencimento</Label>
+                <Input
+                  id="expectedPayAt"
+                  type="date"
+                  value={form.expectedPayAt}
+                  onChange={(e) => set('expectedPayAt', e.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="paidAt">Pago em</Label>
+                <Input
+                  id="paidAt"
+                  type="date"
+                  value={form.paidAt}
+                  onChange={(e) => set('paidAt', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="status">Status</Label>
+                <Select
+                  id="status"
+                  value={form.status}
+                  onChange={(e) => set('status', e.target.value)}
+                >
+                  <option value="ESTIMATED">Estimado</option>
+                  <option value="PENDING">Pendente</option>
+                  <option value="PAID">Pago</option>
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="paymentMethod">Forma de pagamento</Label>
+                <Select
+                  id="paymentMethod"
+                  value={form.paymentMethod}
+                  onChange={(e) => set('paymentMethod', e.target.value)}
+                >
+                  <option value="">Não definido</option>
+                  {PAYMENT_METHODS.map((m) => (
+                    <option key={m.value} value={m.value}>{m.label}</option>
+                  ))}
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="notes">Observações</Label>
+              <Textarea
+                id="notes"
+                placeholder="Opcional"
+                value={form.notes}
+                onChange={(e) => set('notes', e.target.value)}
+              />
+            </div>
+
+            {error && <p className="text-sm text-destructive">{error}</p>}
+
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Salvando...' : 'Salvar Gasto'}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
