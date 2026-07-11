@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, TrendingUp, Receipt, ShoppingCart, BarChart3 } from 'lucide-react';
+import { DeletePeriodButton } from '../../../components/features/delete-period-button';
 import { periodsService } from '../../../services/periods.service';
 import { incomesService } from '../../../services/incomes.service';
 import { generalExpensesService } from '../../../services/general-expenses.service';
@@ -51,15 +52,21 @@ export default async function PeriodDetailPage({ params }: Props) {
 
     return (
       <div className="flex flex-col gap-6 p-8">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/periodos">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <h1 className="text-2xl font-bold">
-            {MONTH_NAMES[period.month - 1]} {period.year}
-          </h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" asChild>
+              <Link href="/periodos">
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
+            </Button>
+            <h1 className="text-2xl font-bold">
+              {MONTH_NAMES[period.month - 1]} {period.year}
+            </h1>
+          </div>
+          <DeletePeriodButton
+            periodId={period.id}
+            periodLabel={`${MONTH_NAMES[period.month - 1]} ${period.year}`}
+          />
         </div>
 
         {/* Summary cards */}

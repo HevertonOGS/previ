@@ -72,7 +72,7 @@ model Income {
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
 
-  period Period @relation(fields: [periodId], references: [id])
+  period Period @relation(fields: [periodId], references: [id], onDelete: Cascade)
 }
 
 // ─────────────────────────────────────────────
@@ -110,7 +110,7 @@ model GeneralExpense {
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
-  period      Period      @relation(fields: [periodId], references: [id])
+  period      Period      @relation(fields: [periodId], references: [id], onDelete: Cascade)
   expenseType ExpenseType @relation(fields: [expenseTypeId], references: [id])
   category    Category    @relation(fields: [categoryId], references: [id])
 }
@@ -132,7 +132,7 @@ model CurrentExpense {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
-  period      Period      @relation(fields: [periodId], references: [id])
+  period      Period      @relation(fields: [periodId], references: [id], onDelete: Cascade)
   expenseType ExpenseType @relation(fields: [expenseTypeId], references: [id])
   category    Category    @relation(fields: [categoryId], references: [id])
 }
@@ -152,7 +152,7 @@ model WeeklyBalance {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  period          Period                        @relation(fields: [periodId], references: [id])
+  period          Period                        @relation(fields: [periodId], references: [id], onDelete: Cascade)
   byTypeItems     WeeklyBalanceByTypeItem[]
   byCategoryItems WeeklyBalanceByCategoryItem[]
 
@@ -165,7 +165,7 @@ model WeeklyBalanceByTypeItem {
   expenseTypeId   String
   amount          Decimal @default(0) @db.Decimal(12, 2)
 
-  weeklyBalance WeeklyBalance @relation(fields: [weeklyBalanceId], references: [id])
+  weeklyBalance WeeklyBalance @relation(fields: [weeklyBalanceId], references: [id], onDelete: Cascade)
   expenseType   ExpenseType   @relation(fields: [expenseTypeId], references: [id])
 
   @@unique([weeklyBalanceId, expenseTypeId])
@@ -177,7 +177,7 @@ model WeeklyBalanceByCategoryItem {
   categoryId      String
   amount          Decimal @default(0) @db.Decimal(12, 2)
 
-  weeklyBalance WeeklyBalance @relation(fields: [weeklyBalanceId], references: [id])
+  weeklyBalance WeeklyBalance @relation(fields: [weeklyBalanceId], references: [id], onDelete: Cascade)
   category      Category      @relation(fields: [categoryId], references: [id])
 
   @@unique([weeklyBalanceId, categoryId])
