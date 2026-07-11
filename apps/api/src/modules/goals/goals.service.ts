@@ -4,50 +4,62 @@ import { CreateGoalDto, UpdateGoalDto, CreateGoalEntryDto, UpdateGoalEntryDto } 
 
 @Injectable()
 export class GoalsService {
-  constructor(private readonly prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
 
-  create(dto: CreateGoalDto) {
-    return this.prisma.goal.create({ data: dto });
+  public create(dto: CreateGoalDto) {
+    const { targetDate, ...rest } = dto;
+    return this.prisma.goal.create({
+      data: {
+        ...rest,
+        ...(targetDate ? { targetDate: new Date(targetDate) } : {}),
+      },
+    });
   }
 
-  findAll() {
+  public findAll() {
     return this.prisma.goal.findMany({
       orderBy: { createdAt: 'desc' },
       include: { entries: { orderBy: [{ year: 'desc' }, { month: 'desc' }] } },
     });
   }
 
-  findOne(id: string) {
+  public findOne(id: string) {
     return this.prisma.goal.findUnique({
       where: { id },
       include: { entries: { orderBy: [{ year: 'desc' }, { month: 'desc' }] } },
     });
   }
 
-  update(id: string, dto: UpdateGoalDto) {
-    return this.prisma.goal.update({ where: { id }, data: dto });
+  public update(id: string, dto: UpdateGoalDto) {
+    return this.prisma.goal.update({
+      where: { id },
+      data: {
+        ...dto,
+        targetDate: dto.targetDate ? new Date(dto.targetDate) : undefined,
+      },
+    });
   }
 
-  remove(id: string) {
+  public remove(id: string) {
     return this.prisma.goal.delete({ where: { id } });
   }
 
-  createEntry(dto: CreateGoalEntryDto) {
+  public createEntry(dto: CreateGoalEntryDto) {
     return this.prisma.goalEntry.create({ data: dto });
   }
 
-  findEntries(goalId: string) {
+  public findEntries(goalId: string) {
     return this.prisma.goalEntry.findMany({
       where: { goalId },
       orderBy: [{ year: 'desc' }, { month: 'desc' }],
     });
   }
 
-  updateEntry(id: string, dto: UpdateGoalEntryDto) {
+  public updateEntry(id: string, dto: UpdateGoalEntryDto) {
     return this.prisma.goalEntry.update({ where: { id }, data: dto });
   }
 
-  removeEntry(id: string) {
+  public removeEntry(id: string) {
     return this.prisma.goalEntry.delete({ where: { id } });
   }
 }

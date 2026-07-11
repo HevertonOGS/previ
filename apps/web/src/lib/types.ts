@@ -10,11 +10,12 @@ export type Income = {
   periodId: string;
   name: string;
   category: string;
+  source: string | null;
   expectedAmount: string;
   actualAmount: string | null;
   expectedReceiptAt: string | null;
   receivedAt: string | null;
-  status: 'PENDING' | 'RECEIVED';
+  status: string;
   notes: string | null;
 };
 
@@ -24,12 +25,13 @@ export type GeneralExpense = {
   expenseTypeId: string;
   categoryId: string;
   name: string;
+  source: string | null;
   estimatedAmount: string;
   actualAmount: string | null;
   expectedPayAt: string | null;
   paidAt: string | null;
-  status: 'ESTIMATED' | 'PENDING' | 'PAID';
-  paymentMethod: PaymentMethod | null;
+  status: string;
+  paymentMethod: string | null;
   notes: string | null;
 };
 
@@ -39,9 +41,10 @@ export type CurrentExpense = {
   expenseTypeId: string;
   categoryId: string;
   name: string;
+  source: string | null;
   amount: string;
   paidAt: string;
-  paymentMethod: PaymentMethod;
+  paymentMethod: string;
   notes: string | null;
 };
 
@@ -76,6 +79,7 @@ export type WeeklyBalance = {
   byCategoryItems: { categoryId: string; amount: string }[];
 };
 
-export type Category = { id: string; name: string };
+export type CategoryKind = 'INCOME' | 'EXPENSE' | 'BOTH';
+export type Category = { id: string; name: string; kind: CategoryKind };
 export type ExpenseType = { id: string; name: string; description: string | null };
 export type PaymentMethod = 'DEBIT' | 'CREDIT' | 'PIX' | 'CASH' | 'BENEFITS' | 'OTHER';

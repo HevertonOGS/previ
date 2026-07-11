@@ -64,7 +64,7 @@ export default function ImportPage() {
       if (p.length > 0) setPeriodId(p[0].id);
       if (c.length > 0) setCategoryId(c[0].id);
       if (t.length > 0) setExpenseTypeId(t[0].id);
-    }).catch(() => {});
+    }).catch(() => undefined);
   }, []);
 
   async function handleFile(file: File) {

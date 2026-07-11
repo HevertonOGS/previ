@@ -1,69 +1,62 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
-
-export enum ExpenseStatusDto {
-  ESTIMATED = 'ESTIMATED',
-  PENDING = 'PENDING',
-  PAID = 'PAID',
-}
-
-export enum PaymentMethodDto {
-  DEBIT = 'DEBIT',
-  CREDIT = 'CREDIT',
-  PIX = 'PIX',
-  CASH = 'CASH',
-  BENEFITS = 'BENEFITS',
-  OTHER = 'OTHER',
-}
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 
 export class CreateGeneralExpenseDto {
   @ApiProperty()
   @IsUUID()
-  periodId: string;
+  periodId!: string;
 
   @ApiProperty()
   @IsUUID()
-  expenseTypeId: string;
+  expenseTypeId!: string;
 
   @ApiProperty()
   @IsUUID()
-  categoryId: string;
+  categoryId!: string;
 
   @ApiProperty({ example: 'Rent' })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
+
+  @ApiPropertyOptional({ example: 'Itaú' })
+  @IsString()
+  @IsOptional()
+  source?: string;
 
   @ApiProperty({ example: 1500 })
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
-  estimatedAmount: number;
+  estimatedAmount!: number;
 
   @ApiPropertyOptional({ example: 1500 })
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   @IsOptional()
   actualAmount?: number;
 
-  @ApiPropertyOptional({ example: '2026-07-10T00:00:00.000Z' })
+  @ApiPropertyOptional({ example: '2026-07-10' })
   @IsString()
   @IsOptional()
   expectedPayAt?: string;
 
-  @ApiPropertyOptional({ example: '2026-07-10T00:00:00.000Z' })
+  @ApiPropertyOptional({ example: '2026-07-10' })
   @IsString()
   @IsOptional()
   paidAt?: string;
 
-  @ApiPropertyOptional({ enum: ExpenseStatusDto, default: ExpenseStatusDto.ESTIMATED })
-  @IsEnum(ExpenseStatusDto)
+  @ApiPropertyOptional({ example: 'Estimado' })
+  @IsString()
   @IsOptional()
-  status?: ExpenseStatusDto;
+  status?: string;
 
-  @ApiPropertyOptional({ enum: PaymentMethodDto })
-  @IsEnum(PaymentMethodDto)
+  @ApiPropertyOptional({ example: 'PIX' })
+  @IsString()
   @IsOptional()
-  paymentMethod?: PaymentMethodDto;
+  paymentMethod?: string;
 
   @ApiPropertyOptional()
   @IsString()

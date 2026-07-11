@@ -4,37 +4,104 @@ import { CreateCategoryDto, CreateExpenseTypeDto } from './dto';
 
 @Injectable()
 export class ReferenceService {
-  constructor(private readonly prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
 
-  createCategory(dto: CreateCategoryDto) {
+  public createCategory(dto: CreateCategoryDto) {
     return this.prisma.category.create({ data: dto });
   }
 
-  findAllCategories() {
-    return this.prisma.category.findMany({ orderBy: { name: 'asc' } });
+  public findAllCategories(kind?: string) {
+    return this.prisma.category.findMany({
+      where: kind ? { kind: kind as never } : undefined,
+      orderBy: { name: 'asc' },
+    });
   }
 
-  findCategoryById(id: string) {
+  public findCategoryById(id: string) {
     return this.prisma.category.findUnique({ where: { id } });
   }
 
-  deleteCategory(id: string) {
+  public updateCategory(id: string, dto: CreateCategoryDto) {
+    return this.prisma.category.update({ where: { id }, data: dto });
+  }
+
+  public deleteCategory(id: string) {
     return this.prisma.category.delete({ where: { id } });
   }
 
-  createExpenseType(dto: CreateExpenseTypeDto) {
+  public createExpenseType(dto: CreateExpenseTypeDto) {
     return this.prisma.expenseType.create({ data: dto });
   }
 
-  findAllExpenseTypes() {
+  public findAllExpenseTypes() {
     return this.prisma.expenseType.findMany({ orderBy: { name: 'asc' } });
   }
 
-  findExpenseTypeById(id: string) {
+  public findExpenseTypeById(id: string) {
     return this.prisma.expenseType.findUnique({ where: { id } });
   }
 
-  deleteExpenseType(id: string) {
+  public updateExpenseType(id: string, dto: CreateExpenseTypeDto) {
+    return this.prisma.expenseType.update({ where: { id }, data: dto });
+  }
+
+  public deleteExpenseType(id: string) {
     return this.prisma.expenseType.delete({ where: { id } });
+  }
+
+  // ── Income Status Options ────────────────────────────────────────────
+
+  public createIncomeStatusOption(name: string) {
+    return this.prisma.incomeStatusOption.create({ data: { id: crypto.randomUUID(), name } });
+  }
+
+  public findAllIncomeStatusOptions() {
+    return this.prisma.incomeStatusOption.findMany({ orderBy: { name: 'asc' } });
+  }
+
+  public deleteIncomeStatusOption(id: string) {
+    return this.prisma.incomeStatusOption.delete({ where: { id } });
+  }
+
+  // ── Expense Status Options ───────────────────────────────────────────
+
+  public createExpenseStatusOption(name: string) {
+    return this.prisma.expenseStatusOption.create({ data: { id: crypto.randomUUID(), name } });
+  }
+
+  public findAllExpenseStatusOptions() {
+    return this.prisma.expenseStatusOption.findMany({ orderBy: { name: 'asc' } });
+  }
+
+  public deleteExpenseStatusOption(id: string) {
+    return this.prisma.expenseStatusOption.delete({ where: { id } });
+  }
+
+  // ── Payment Method Options ───────────────────────────────────────────
+
+  public createPaymentMethodOption(name: string) {
+    return this.prisma.paymentMethodOption.create({ data: { id: crypto.randomUUID(), name } });
+  }
+
+  public findAllPaymentMethodOptions() {
+    return this.prisma.paymentMethodOption.findMany({ orderBy: { name: 'asc' } });
+  }
+
+  public deletePaymentMethodOption(id: string) {
+    return this.prisma.paymentMethodOption.delete({ where: { id } });
+  }
+
+  // ── Source Options ───────────────────────────────────────────────────
+
+  public createSourceOption(name: string) {
+    return this.prisma.sourceOption.create({ data: { id: crypto.randomUUID(), name } });
+  }
+
+  public findAllSourceOptions() {
+    return this.prisma.sourceOption.findMany({ orderBy: { name: 'asc' } });
+  }
+
+  public deleteSourceOption(id: string) {
+    return this.prisma.sourceOption.delete({ where: { id } });
   }
 }

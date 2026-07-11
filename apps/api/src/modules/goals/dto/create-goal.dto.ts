@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export enum GoalStatusDto {
@@ -11,12 +12,13 @@ export class CreateGoalDto {
   @ApiProperty({ example: 'Emergency Fund' })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: 10000 })
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
-  targetAmount: number;
+  targetAmount!: number;
 
   @ApiPropertyOptional({ example: '2026-12-31T00:00:00.000Z' })
   @IsString()

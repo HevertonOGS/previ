@@ -57,8 +57,8 @@ export default function NotionImportPage() {
   const [importedCount, setImportedCount] = useState(0);
 
   useEffect(() => {
-    periodsService.list().then((p) => { setPeriods(p); if (p.length) setPeriodId(p[0].id); }).catch(() => {});
-    goalsService.list().then((g) => { setGoals(g); if (g.length) setGoalId(g[0].id); }).catch(() => {});
+    periodsService.list().then((p) => { setPeriods(p); if (p.length) setPeriodId(p[0].id); }).catch(() => undefined);
+    goalsService.list().then((g) => { setGoals(g); if (g.length) setGoalId(g[0].id); }).catch(() => undefined);
   }, []);
 
   async function handleFile(file: File) {

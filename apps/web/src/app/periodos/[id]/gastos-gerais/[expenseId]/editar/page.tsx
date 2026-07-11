@@ -4,19 +4,19 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { generalExpensesService } from '../../../../../services/general-expenses.service';
-import { referenceService, type StatusOption, type PaymentMethodOption } from '../../../../../services/reference.service';
-import type { Category, ExpenseType } from '../../../../../lib/types';
-import { Button } from '../../../../../components/ui/button';
-import { Input } from '../../../../../components/ui/input';
-import { Label } from '../../../../../components/ui/label';
-import { Select } from '../../../../../components/ui/select';
-import { Textarea } from '../../../../../components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../../components/ui/card';
+import { generalExpensesService } from '../../../../../../services/general-expenses.service';
+import { referenceService, type StatusOption, type PaymentMethodOption } from '../../../../../../services/reference.service';
+import type { Category, ExpenseType } from '../../../../../../lib/types';
+import { Button } from '../../../../../../components/ui/button';
+import { Input } from '../../../../../../components/ui/input';
+import { Label } from '../../../../../../components/ui/label';
+import { Select } from '../../../../../../components/ui/select';
+import { Textarea } from '../../../../../../components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../../../components/ui/card';
 
-export default function NewGeneralExpensePage() {
+export default function EditGeneralExpensePage() {
   const router = useRouter();
-  const { id: periodId } = useParams<{ id: string }>();
+  const { id: periodId, expenseId } = useParams<{ id: string; expenseId: string }>();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [expenseTypes, setExpenseTypes] = useState<ExpenseType[]>([]);
@@ -37,30 +37,39 @@ export default function NewGeneralExpensePage() {
     paymentMethod: '',
     notes: '',
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     Promise.all([
+      generalExpensesService.get(expenseId),
       referenceService.categories('EXPENSE'),
       referenceService.expenseTypes(),
       referenceService.expenseStatusOptions(),
       referenceService.paymentMethodOptions(),
       referenceService.sourceOptions(),
-    ]).then(([cats, types, statuses, payments, sources]) => {
+    ]).then(([expense, cats, types, statuses, payments, sources]) => {
       setCategories(cats);
       setExpenseTypes(types);
       setStatusOptions(statuses);
       setPaymentMethods(payments);
       setSourceOptions(sources);
-      setForm((prev) => ({
-        ...prev,
-        categoryId: cats[0]?.id ?? '',
-        expenseTypeId: types[0]?.id ?? '',
-        status: statuses[0]?.name ?? 'Estimado',
-      }));
-    }).catch(() => undefined);
-  }, []);
+      setForm({
+        name: expense.name,
+        expenseTypeId: expense.expenseTypeId,
+        categoryId: expense.categoryId,
+        source: expense.source ?? '',
+        estimatedAmount: expense.estimatedAmount,
+        actualAmount: expense.actualAmount ?? '',
+        expectedPayAt: expense.expectedPayAt ? expense.expectedPayAt.slice(0, 10) : '',
+        paidAt: expense.paidAt ? expense.paidAt.slice(0, 10) : '',
+        status: expense.status,
+        paymentMethod: expense.paymentMethod ?? '',
+        notes: expense.notes ?? '',
+      });
+    }).catch(() => undefined).finally(() => setFetching(false));
+  }, [expenseId]);
 
   function set(field: string, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -71,8 +80,7 @@ export default function NewGeneralExpensePage() {
     setError('');
     setLoading(true);
     try {
-      await generalExpensesService.create({
-        periodId,
+      await generalExpensesService.update(expenseId, {
         name: form.name,
         expenseTypeId: form.expenseTypeId,
         categoryId: form.categoryId,
@@ -93,13 +101,15 @@ export default function NewGeneralExpensePage() {
     }
   }
 
+  if (fetching) return <div className="p-8 text-sm text-muted-foreground">Carregando...</div>;
+
   return (
     <div className="flex flex-col gap-6 p-8 max-w-lg">
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" asChild>
           <Link href={`/periodos/${periodId}/gastos-gerais`}><ArrowLeft className="h-4 w-4" /></Link>
         </Button>
-        <h1 className="text-2xl font-bold">Novo Gasto Geral</h1>
+        <h1 className="text-2xl font-bold">Editar Gasto Geral</h1>
       </div>
 
       <Card>
@@ -108,8 +118,7 @@ export default function NewGeneralExpensePage() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="name">Descrição *</Label>
-              <Input id="name" placeholder="Ex: Aluguel, Internet, etc." value={form.name}
-                onChange={(e) => set('name', e.target.value)} required />
+              <Input id="name" value={form.name} onChange={(e) => set('name', e.target.value)} required />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -138,13 +147,13 @@ export default function NewGeneralExpensePage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="estimatedAmount">Valor estimado (R$) *</Label>
-                <Input id="estimatedAmount" type="number" step="0.01" min="0" placeholder="0,00"
-                  value={form.estimatedAmount} onChange={(e) => set('estimatedAmount', e.target.value)} required />
+                <Input id="estimatedAmount" type="number" step="0.01" min="0" value={form.estimatedAmount}
+                  onChange={(e) => set('estimatedAmount', e.target.value)} required />
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="actualAmount">Valor pago (R$)</Label>
-                <Input id="actualAmount" type="number" step="0.01" min="0" placeholder="0,00"
-                  value={form.actualAmount} onChange={(e) => set('actualAmount', e.target.value)} />
+                <Input id="actualAmount" type="number" step="0.01" min="0" value={form.actualAmount}
+                  onChange={(e) => set('actualAmount', e.target.value)} />
               </div>
             </div>
 
@@ -179,13 +188,12 @@ export default function NewGeneralExpensePage() {
 
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="notes">Observações</Label>
-              <Textarea id="notes" placeholder="Opcional" value={form.notes}
-                onChange={(e) => set('notes', e.target.value)} />
+              <Textarea id="notes" value={form.notes} onChange={(e) => set('notes', e.target.value)} />
             </div>
 
             {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? 'Salvando...' : 'Salvar Gasto'}
+              {loading ? 'Salvando...' : 'Salvar Alterações'}
             </Button>
           </form>
         </CardContent>

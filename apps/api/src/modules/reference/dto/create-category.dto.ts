@@ -1,9 +1,20 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+
+export enum CategoryKindDto {
+  INCOME = 'INCOME',
+  EXPENSE = 'EXPENSE',
+  BOTH = 'BOTH',
+}
 
 export class CreateCategoryDto {
   @ApiProperty({ example: 'Housing' })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
+
+  @ApiPropertyOptional({ enum: CategoryKindDto, default: CategoryKindDto.EXPENSE })
+  @IsEnum(CategoryKindDto)
+  @IsOptional()
+  kind?: CategoryKindDto;
 }

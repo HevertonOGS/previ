@@ -1,18 +1,21 @@
 import Link from 'next/link';
-import { ArrowLeft, Plus } from 'lucide-react';
+import { ArrowLeft, Plus, Pencil } from 'lucide-react';
 import { incomesService } from '../../../../services/incomes.service';
 import { Card, CardContent } from '../../../../components/ui/card';
 import { Badge } from '../../../../components/ui/badge';
 import { Button } from '../../../../components/ui/button';
+import { DeleteItemButton } from '../../../../components/features/delete-item-button';
 
 function formatCurrency(value: string | number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value));
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: 'Pendente',
-  RECEIVED: 'Recebida',
-};
+function incomeStatusVariant(status: string): 'success' | 'warning' | 'secondary' {
+  const s = status.toLowerCase();
+  if (s.includes('receb') || s.includes('pago')) return 'success';
+  if (s.includes('pend')) return 'warning';
+  return 'secondary';
+}
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -34,11 +37,19 @@ export default async function IncomesPage({ params }: Props) {
 
   return (
     <div className="flex flex-col gap-6 p-8">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href={`/periodos/${id}`}><ArrowLeft className="h-4 w-4" /></Link>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href={`/periodos/${id}`}><ArrowLeft className="h-4 w-4" /></Link>
+          </Button>
+          <h1 className="text-2xl font-bold">Receitas</h1>
+        </div>
+        <Button asChild>
+          <Link href={`/periodos/${id}/receitas/nova`}>
+            <Plus className="h-4 w-4" />
+            Nova Receita
+          </Link>
         </Button>
-        <h1 className="text-2xl font-bold">Receitas</h1>
       </div>
 
       <div className="flex gap-4">
@@ -52,27 +63,18 @@ export default async function IncomesPage({ params }: Props) {
         </div>
       </div>
 
-      <div className="flex justify-end">
-        <Button asChild>
-          <Link href={`/periodos/${id}/receitas/nova`}>
-            <Plus className="h-4 w-4" />
-            Nova Receita
-          </Link>
-        </Button>
-      </div>
-
       <div className="flex flex-col gap-2">
         {incomes.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhuma receita lançada.</p>
         ) : (
           incomes.map((income) => (
-            <Card key={income.id}>
+            <Card key={income.id} className="group">
               <CardContent className="flex items-center justify-between py-4 px-5">
                 <div>
                   <p className="font-medium">{income.name}</p>
                   <p className="text-xs text-muted-foreground">{income.category}</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <div className="text-right">
                     <p className="font-semibold">
                       {formatCurrency(income.actualAmount ?? income.expectedAmount)}
@@ -83,9 +85,15 @@ export default async function IncomesPage({ params }: Props) {
                       </p>
                     )}
                   </div>
-                  <Badge variant={income.status === 'RECEIVED' ? 'success' : 'warning'}>
-                    {STATUS_LABELS[income.status]}
+                  <Badge variant={incomeStatusVariant(income.status)}>
+                    {income.status}
                   </Badge>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" asChild>
+                    <Link href={`/periodos/${id}/receitas/${income.id}/editar`}>
+                      <Pencil className="h-4 w-4 text-muted-foreground" />
+                    </Link>
+                  </Button>
+                  <DeleteItemButton id={income.id} endpoint="/incomes" label={income.name} />
                 </div>
               </CardContent>
             </Card>

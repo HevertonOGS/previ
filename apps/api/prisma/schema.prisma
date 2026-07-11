@@ -21,14 +21,49 @@ model ExpenseType {
   weeklyTypeItems  WeeklyBalanceByTypeItem[]
 }
 
+enum CategoryKind {
+  INCOME
+  EXPENSE
+  BOTH
+}
+
 model Category {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  createdAt DateTime @default(now())
+  id        String       @id @default(uuid())
+  name      String       @unique
+  kind      CategoryKind @default(EXPENSE)
+  createdAt DateTime     @default(now())
 
   generalExpenses     GeneralExpense[]
   currentExpenses     CurrentExpense[]
   weeklyCategoryItems WeeklyBalanceByCategoryItem[]
+}
+
+// Customizable status options for incomes
+model IncomeStatusOption {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
+
+// Customizable status options for expenses
+model ExpenseStatusOption {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
+
+// Customizable payment method options
+model PaymentMethodOption {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
+
+// Shared source options for incomes and expenses
+model SourceOption {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
 }
 
 // ─────────────────────────────────────────────
@@ -53,24 +88,20 @@ model Period {
 // Incomes
 // ─────────────────────────────────────────────
 
-enum IncomeStatus {
-  PENDING
-  RECEIVED
-}
-
 model Income {
-  id                String       @id @default(uuid())
+  id                String   @id @default(uuid())
   periodId          String
   name              String
   category          String
-  expectedAmount    Decimal      @db.Decimal(12, 2)
-  actualAmount      Decimal?     @db.Decimal(12, 2)
+  source            String?
+  expectedAmount    Decimal  @db.Decimal(12, 2)
+  actualAmount      Decimal? @db.Decimal(12, 2)
   expectedReceiptAt DateTime?
   receivedAt        DateTime?
-  status            IncomeStatus @default(PENDING)
+  status            String   @default("Pendente")
   notes             String?
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   period Period @relation(fields: [periodId], references: [id], onDelete: Cascade)
 }
@@ -79,36 +110,22 @@ model Income {
 // General expenses (predictable, planned before or during the month)
 // ─────────────────────────────────────────────
 
-enum ExpenseStatus {
-  ESTIMATED
-  PENDING
-  PAID
-}
-
-enum PaymentMethod {
-  DEBIT
-  CREDIT
-  PIX
-  CASH
-  BENEFITS
-  OTHER
-}
-
 model GeneralExpense {
-  id              String         @id @default(uuid())
+  id              String   @id @default(uuid())
   periodId        String
   expenseTypeId   String
   categoryId      String
   name            String
-  estimatedAmount Decimal        @db.Decimal(12, 2)
-  actualAmount    Decimal?       @db.Decimal(12, 2)
+  source          String?
+  estimatedAmount Decimal  @db.Decimal(12, 2)
+  actualAmount    Decimal? @db.Decimal(12, 2)
   expectedPayAt   DateTime?
   paidAt          DateTime?
-  status          ExpenseStatus  @default(ESTIMATED)
-  paymentMethod   PaymentMethod?
+  status          String   @default("Estimado")
+  paymentMethod   String?
   notes           String?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   period      Period      @relation(fields: [periodId], references: [id], onDelete: Cascade)
   expenseType ExpenseType @relation(fields: [expenseTypeId], references: [id])
@@ -120,17 +137,18 @@ model GeneralExpense {
 // ─────────────────────────────────────────────
 
 model CurrentExpense {
-  id            String        @id @default(uuid())
+  id            String   @id @default(uuid())
   periodId      String
   expenseTypeId String
   categoryId    String
   name          String
-  amount        Decimal       @db.Decimal(12, 2)
+  source        String?
+  amount        Decimal  @db.Decimal(12, 2)
   paidAt        DateTime
-  paymentMethod PaymentMethod
+  paymentMethod String
   notes         String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   period      Period      @relation(fields: [periodId], references: [id], onDelete: Cascade)
   expenseType ExpenseType @relation(fields: [expenseTypeId], references: [id])

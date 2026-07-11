@@ -55,3 +55,4 @@ npx nx dev web             # Start frontend (port 4200)
 - Prisma schema is the single source of truth for the database.
 - Shared types between api and web go in `libs/shared-types`.
 - UI primitives go in `libs/ui`; feature-specific components go in `apps/web/src/components/features/`.
+- **Responsive design**: All pages must be usable on smartphones. Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`) and avoid fixed widths that break on small screens. Test layouts at mobile width before considering a page complete.

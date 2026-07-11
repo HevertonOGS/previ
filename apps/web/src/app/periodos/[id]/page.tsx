@@ -35,16 +35,16 @@ type Props = { params: Promise<{ id: string }> };
 export default async function PeriodDetailPage({ params }: Props) {
   const { id } = await params;
 
-  try {
-    const [period, incomes, generalExpenses, currentExpenses, weeklyBalances] = await Promise.all([
-      periodsService.get(id),
-      incomesService.list(id),
-      generalExpensesService.list(id),
-      currentExpensesService.list(id),
-      weeklyBalancesService.list(id),
-    ]);
+  const period = await periodsService.get(id).catch(() => notFound());
 
-    const totalIncome = sumAmounts(incomes);
+  const [incomes, generalExpenses, currentExpenses, weeklyBalances] = await Promise.all([
+    incomesService.list(id).catch(() => []),
+    generalExpensesService.list(id).catch(() => []),
+    currentExpensesService.list(id).catch(() => []),
+    weeklyBalancesService.list(id).catch(() => []),
+  ]);
+
+  const totalIncome = sumAmounts(incomes);
     const totalGeneralExpenses = sumAmounts(generalExpenses);
     const totalCurrentExpenses = sumAmounts(currentExpenses);
     const totalExpenses = totalGeneralExpenses + totalCurrentExpenses;
@@ -183,8 +183,8 @@ export default async function PeriodDetailPage({ params }: Props) {
                       <p className="font-semibold text-green-600">
                         {formatCurrency(income.actualAmount ?? income.expectedAmount)}
                       </p>
-                      <Badge variant={income.status === 'RECEIVED' ? 'success' : 'warning'}>
-                        {income.status === 'RECEIVED' ? 'Recebida' : 'Pendente'}
+                      <Badge variant={income.status.toLowerCase().includes('receb') ? 'success' : 'warning'}>
+                        {income.status}
                       </Badge>
                     </div>
                   </CardContent>
@@ -195,7 +195,4 @@ export default async function PeriodDetailPage({ params }: Props) {
         )}
       </div>
     );
-  } catch {
-    notFound();
-  }
 }

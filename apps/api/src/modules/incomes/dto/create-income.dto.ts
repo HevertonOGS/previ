@@ -1,51 +1,54 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
-
-export enum IncomeStatusDto {
-  PENDING = 'PENDING',
-  RECEIVED = 'RECEIVED',
-}
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 
 export class CreateIncomeDto {
   @ApiProperty({ example: 'uuid' })
   @IsUUID()
-  periodId: string;
+  periodId!: string;
 
   @ApiProperty({ example: 'Salary' })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: 'Employment' })
   @IsString()
   @IsNotEmpty()
-  category: string;
+  category!: string;
+
+  @ApiPropertyOptional({ example: 'Nubank' })
+  @IsString()
+  @IsOptional()
+  source?: string;
 
   @ApiProperty({ example: 5000 })
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
-  expectedAmount: number;
+  expectedAmount!: number;
 
   @ApiPropertyOptional({ example: 5000 })
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   @IsOptional()
   actualAmount?: number;
 
-  @ApiPropertyOptional({ example: '2026-07-05T00:00:00.000Z' })
+  @ApiPropertyOptional({ example: '2026-07-05' })
   @IsString()
   @IsOptional()
   expectedReceiptAt?: string;
 
-  @ApiPropertyOptional({ example: '2026-07-05T00:00:00.000Z' })
+  @ApiPropertyOptional({ example: '2026-07-05' })
   @IsString()
   @IsOptional()
   receivedAt?: string;
 
-  @ApiPropertyOptional({ enum: IncomeStatusDto, default: IncomeStatusDto.PENDING })
-  @IsEnum(IncomeStatusDto)
+  @ApiPropertyOptional({ example: 'Pendente' })
+  @IsString()
   @IsOptional()
-  status?: IncomeStatusDto;
+  status?: string;
 
   @ApiPropertyOptional()
   @IsString()

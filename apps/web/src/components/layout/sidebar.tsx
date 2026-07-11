@@ -5,9 +5,6 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   CalendarDays,
-  TrendingUp,
-  ShoppingCart,
-  Receipt,
   Target,
   Upload,
   Settings,
@@ -17,9 +14,6 @@ import { cn } from '../../lib/utils';
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/periodos', label: 'Períodos', icon: CalendarDays },
-  { href: '/receitas', label: 'Receitas', icon: TrendingUp },
-  { href: '/gastos-gerais', label: 'Gastos Gerais', icon: Receipt },
-  { href: '/gastos-correntes', label: 'Gastos Correntes', icon: ShoppingCart },
   { href: '/metas', label: 'Metas', icon: Target },
   { href: '/importar', label: 'Importar', icon: Upload },
   { href: '/configuracoes', label: 'Configurações', icon: Settings },
