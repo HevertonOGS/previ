@@ -33,7 +33,6 @@ export default function NewIncomePage() {
     status: '',
     notes: '',
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -59,7 +58,6 @@ export default function NewIncomePage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError('');
     setLoading(true);
     try {
       await incomesService.create({
@@ -75,8 +73,8 @@ export default function NewIncomePage() {
         notes: form.notes || null,
       });
       router.push(`/periodos/${periodId}/receitas`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao salvar receita.');
+    } catch {
+      // erro já exibido via toast
     } finally {
       setLoading(false);
     }
@@ -158,7 +156,6 @@ export default function NewIncomePage() {
                 onChange={(e) => set('notes', e.target.value)} />
             </div>
 
-            {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? 'Salvando...' : 'Salvar Receita'}
             </Button>

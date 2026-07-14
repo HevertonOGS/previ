@@ -45,12 +45,10 @@ export function GoalEntryFormDialog(props: Props) {
   const [actualAmount, setActualAmount] = useState(
     props.mode === 'edit' ? props.entry.actualAmount ?? '' : '',
   );
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
     setLoading(true);
     try {
       if (props.mode === 'create') {
@@ -69,8 +67,8 @@ export function GoalEntryFormDialog(props: Props) {
       }
       setOpen(false);
       router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao salvar aporte.');
+    } catch {
+      // erro já exibido via toast
     } finally {
       setLoading(false);
     }
@@ -161,8 +159,6 @@ export function GoalEntryFormDialog(props: Props) {
               />
             </div>
           </div>
-
-          {error && <p className="text-sm text-destructive">{error}</p>}
 
           <DialogFooter className="mt-2">
             <DialogClose asChild>

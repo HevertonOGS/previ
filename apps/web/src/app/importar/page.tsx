@@ -76,8 +76,8 @@ export default function ImportPage() {
       setEditedRows({});
       setRemovedIds(new Set());
       setStep('preview');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao processar o arquivo.');
+    } catch {
+      // erro já exibido via toast
     } finally {
       setUploading(false);
     }
@@ -132,8 +132,8 @@ export default function ImportPage() {
       });
       setImportedCount(result.created);
       setStep('success');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao confirmar importação.');
+    } catch {
+      // erro já exibido via toast
     } finally {
       setConfirming(false);
     }

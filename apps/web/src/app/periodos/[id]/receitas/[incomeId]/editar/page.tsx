@@ -34,7 +34,6 @@ export default function EditIncomePage() {
   });
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     Promise.all([
@@ -66,7 +65,6 @@ export default function EditIncomePage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError('');
     setLoading(true);
     try {
       await incomesService.update(incomeId, {
@@ -81,8 +79,8 @@ export default function EditIncomePage() {
         notes: form.notes || null,
       });
       router.push(`/periodos/${periodId}/receitas`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao salvar receita.');
+    } catch {
+      // erro já exibido via toast
     } finally {
       setLoading(false);
     }
@@ -162,7 +160,6 @@ export default function EditIncomePage() {
               <Textarea id="notes" value={form.notes} onChange={(e) => set('notes', e.target.value)} />
             </div>
 
-            {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? 'Salvando...' : 'Salvar Alterações'}
             </Button>

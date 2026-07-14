@@ -39,7 +39,6 @@ export default function EditGeneralExpensePage() {
   });
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     Promise.all([
@@ -77,7 +76,6 @@ export default function EditGeneralExpensePage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError('');
     setLoading(true);
     try {
       await generalExpensesService.update(expenseId, {
@@ -94,8 +92,8 @@ export default function EditGeneralExpensePage() {
         notes: form.notes || null,
       });
       router.push(`/periodos/${periodId}/gastos-gerais`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao salvar gasto.');
+    } catch {
+      // erro já exibido via toast
     } finally {
       setLoading(false);
     }
@@ -191,7 +189,6 @@ export default function EditGeneralExpensePage() {
               <Textarea id="notes" value={form.notes} onChange={(e) => set('notes', e.target.value)} />
             </div>
 
-            {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? 'Salvando...' : 'Salvar Alterações'}
             </Button>

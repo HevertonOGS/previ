@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Upload, CheckCircle, AlertCircle, X } from 'lucide-react';
+import { Upload, CheckCircle, X } from 'lucide-react';
 import {
   notionImportService,
   type NotionTableType,
@@ -53,7 +53,6 @@ export default function NotionImportPage() {
 
   const [uploading, setUploading] = useState(false);
   const [confirming, setConfirming] = useState(false);
-  const [error, setError] = useState('');
   const [importedCount, setImportedCount] = useState(0);
 
   useEffect(() => {
@@ -62,21 +61,21 @@ export default function NotionImportPage() {
   }, []);
 
   async function handleFile(file: File) {
-    setError(''); setUploading(true);
+    setUploading(true);
     try {
       const parsed = await notionImportService.parseFile(file, tableType);
       setRows(parsed);
       setRemovedIds(new Set());
       setStep('preview');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao processar arquivo.');
+    } catch {
+      // erro já exibido via toast
     } finally { setUploading(false); }
   }
 
   const activeRows = rows.filter((r) => !removedIds.has(r.tempId));
 
   async function handleConfirm() {
-    setError(''); setConfirming(true);
+    setConfirming(true);
     try {
       let result: { created: number };
       if (tableType === 'incomes') {
@@ -90,8 +89,8 @@ export default function NotionImportPage() {
       }
       setImportedCount(result.created);
       setStep('success');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao confirmar importação.');
+    } catch {
+      // erro já exibido via toast
     } finally { setConfirming(false); }
   }
 
@@ -175,12 +174,6 @@ export default function NotionImportPage() {
           })}
         </div>
 
-        {error && (
-          <div className="flex items-center gap-2 text-sm text-destructive">
-            <AlertCircle className="h-4 w-4" />{error}
-          </div>
-        )}
-
         <div className="flex justify-end gap-3">
           <Button variant="outline" onClick={() => setStep('select-type')}>Cancelar</Button>
           <Button onClick={handleConfirm} disabled={confirming || activeRows.length === 0}>
@@ -214,11 +207,6 @@ export default function NotionImportPage() {
         </div>
 
         {uploading && <p className="text-sm text-center text-muted-foreground">Processando...</p>}
-        {error && (
-          <div className="flex items-center gap-2 text-sm text-destructive">
-            <AlertCircle className="h-4 w-4" />{error}
-          </div>
-        )}
 
         <Button variant="outline" onClick={() => setStep('select-type')}>Voltar</Button>
       </div>

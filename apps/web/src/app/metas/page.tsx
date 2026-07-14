@@ -124,14 +124,12 @@ export default async function GoalsPage() {
                     <p className="text-xs text-muted-foreground">{goal.notes}</p>
                   )}
 
-                  <div className="border-t pt-3">
-                    <Button variant="outline" size="sm" className="w-full" asChild>
-                      <Link href={`/metas/${goal.id}`}>
-                        <Wallet className="h-4 w-4" />
-                        Ver aportes
-                      </Link>
-                    </Button>
-                  </div>
+                  <Button variant="outline" size="sm" className="w-full" asChild>
+                    <Link href={`/metas/${goal.id}`}>
+                      <Wallet className="h-4 w-4" />
+                      Ver aportes
+                    </Link>
+                  </Button>
                 </CardContent>
               </Card>
             );

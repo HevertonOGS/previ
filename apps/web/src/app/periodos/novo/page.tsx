@@ -34,18 +34,16 @@ export default function NewPeriodPage() {
 
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
     setLoading(true);
     try {
       const period = await periodsService.create({ year, month });
       router.push(`/periodos/${period.id}`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao criar período.');
+    } catch {
+      // erro já exibido via toast
     } finally {
       setLoading(false);
     }
@@ -93,8 +91,6 @@ export default function NewPeriodPage() {
                 </Select>
               </div>
             </div>
-
-            {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? 'Criando...' : 'Criar Período'}

@@ -35,7 +35,6 @@ export default function NewCurrentExpensePage() {
     paymentMethod: '',
     notes: '',
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -64,7 +63,6 @@ export default function NewCurrentExpensePage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError('');
     setLoading(true);
     try {
       await currentExpensesService.create({
@@ -79,8 +77,8 @@ export default function NewCurrentExpensePage() {
         notes: form.notes || null,
       });
       router.push(`/periodos/${periodId}/gastos-correntes`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao salvar gasto.');
+    } catch {
+      // erro já exibido via toast
     } finally {
       setLoading(false);
     }
@@ -154,7 +152,6 @@ export default function NewCurrentExpensePage() {
                 onChange={(e) => set('notes', e.target.value)} />
             </div>
 
-            {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? 'Salvando...' : 'Salvar Gasto'}
             </Button>

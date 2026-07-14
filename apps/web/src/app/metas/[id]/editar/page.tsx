@@ -25,7 +25,6 @@ export default function EditGoalPage() {
   });
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     goalsService.get(id)
@@ -48,7 +47,6 @@ export default function EditGoalPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
     setLoading(true);
     try {
       await goalsService.update(id, {
@@ -59,8 +57,8 @@ export default function EditGoalPage() {
         notes: form.notes || null,
       });
       router.push('/metas');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao salvar meta.');
+    } catch {
+      // erro já exibido via toast
     } finally {
       setLoading(false);
     }
@@ -140,8 +138,6 @@ export default function EditGoalPage() {
                 onChange={(e) => set('notes', e.target.value)}
               />
             </div>
-
-            {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? 'Salvando...' : 'Salvar Alterações'}

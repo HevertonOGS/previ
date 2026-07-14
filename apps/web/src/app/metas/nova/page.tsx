@@ -22,7 +22,6 @@ export default function NewGoalPage() {
     status: 'ACTIVE' as 'ACTIVE' | 'COMPLETED' | 'PAUSED',
     notes: '',
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   function set(field: string, value: string) {
@@ -31,7 +30,6 @@ export default function NewGoalPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
     setLoading(true);
     try {
       await goalsService.create({
@@ -42,8 +40,8 @@ export default function NewGoalPage() {
         notes: form.notes || null,
       });
       router.push('/metas');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao salvar meta.');
+    } catch {
+      // erro já exibido via toast
     } finally {
       setLoading(false);
     }
@@ -121,8 +119,6 @@ export default function NewGoalPage() {
                 onChange={(e) => set('notes', e.target.value)}
               />
             </div>
-
-            {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? 'Salvando...' : 'Salvar Meta'}

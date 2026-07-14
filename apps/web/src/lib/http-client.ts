@@ -1,3 +1,5 @@
+import { toast } from './toast-store';
+
 export class HttpClient {
   private readonly baseUrl: string;
 
@@ -12,11 +14,23 @@ export class HttpClient {
     });
 
     if (!res.ok) {
-      const error = await res.text();
-      throw new Error(error || `Request failed: ${res.status}`);
+      const body = await res.text();
+      const message = this.extractMessage(body) || `Request failed: ${res.status}`;
+      toast({ title: 'Erro', description: message, variant: 'destructive' });
+      throw new Error(message);
     }
 
     return res.json() as Promise<T>;
+  }
+
+  private extractMessage(body: string): string | undefined {
+    try {
+      const parsed = JSON.parse(body) as { message?: string | string[] };
+      if (Array.isArray(parsed.message)) return parsed.message.join(' ');
+      return parsed.message;
+    } catch {
+      return body || undefined;
+    }
   }
 
   public get<T>(path: string): Promise<T> {
