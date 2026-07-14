@@ -34,6 +34,10 @@ export class GoalsService {
   public updateEntry(id: string, data: UpdateGoalEntryInput): Promise<GoalEntry> {
     return apiClient.patch<GoalEntry>(`/goals/entries/${id}`, data);
   }
+
+  public deleteEntry(id: string): Promise<GoalEntry> {
+    return apiClient.delete<GoalEntry>(`/goals/entries/${id}`);
+  }
 }
 
 export const goalsService = new GoalsService();

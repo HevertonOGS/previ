@@ -1,19 +1,20 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { goalsService } from '../../../services/goals.service';
-import { Button } from '../../../components/ui/button';
-import { Input } from '../../../components/ui/input';
-import { Label } from '../../../components/ui/label';
-import { Select } from '../../../components/ui/select';
-import { Textarea } from '../../../components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import { goalsService } from '../../../../services/goals.service';
+import { Button } from '../../../../components/ui/button';
+import { Input } from '../../../../components/ui/input';
+import { Label } from '../../../../components/ui/label';
+import { Select } from '../../../../components/ui/select';
+import { Textarea } from '../../../../components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
 
-export default function NewGoalPage() {
+export default function EditGoalPage() {
   const router = useRouter();
+  const { id } = useParams<{ id: string }>();
 
   const [form, setForm] = useState({
     name: '',
@@ -22,8 +23,24 @@ export default function NewGoalPage() {
     status: 'ACTIVE' as 'ACTIVE' | 'COMPLETED' | 'PAUSED',
     notes: '',
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    goalsService.get(id)
+      .then((goal) => {
+        setForm({
+          name: goal.name,
+          targetAmount: goal.targetAmount,
+          targetDate: goal.targetDate ? goal.targetDate.slice(0, 10) : '',
+          status: goal.status,
+          notes: goal.notes ?? '',
+        });
+      })
+      .catch(() => undefined)
+      .finally(() => setFetching(false));
+  }, [id]);
 
   function set(field: string, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -34,7 +51,7 @@ export default function NewGoalPage() {
     setError('');
     setLoading(true);
     try {
-      await goalsService.create({
+      await goalsService.update(id, {
         name: form.name,
         targetAmount: form.targetAmount,
         targetDate: form.targetDate ? new Date(form.targetDate).toISOString() : null,
@@ -49,13 +66,15 @@ export default function NewGoalPage() {
     }
   }
 
+  if (fetching) return <div className="p-8 text-sm text-muted-foreground">Carregando...</div>;
+
   return (
     <div className="flex flex-col gap-6 p-8 max-w-lg">
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/metas"><ArrowLeft className="h-4 w-4" /></Link>
         </Button>
-        <h1 className="text-2xl font-bold">Nova Meta</h1>
+        <h1 className="text-2xl font-bold">Editar Meta</h1>
       </div>
 
       <Card>
@@ -125,7 +144,7 @@ export default function NewGoalPage() {
             {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? 'Salvando...' : 'Salvar Meta'}
+              {loading ? 'Salvando...' : 'Salvar Alterações'}
             </Button>
           </form>
         </CardContent>

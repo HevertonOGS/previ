@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import { Plus, Target } from 'lucide-react';
+import { Plus, Target, Pencil, Wallet } from 'lucide-react';
 import { goalsService } from '../../services/goals.service';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
+import { DeleteItemButton } from '../../components/features/delete-item-button';
 
 function formatCurrency(value: string | number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value));
@@ -66,13 +67,30 @@ export default async function GoalsPage() {
             const percentage = target > 0 ? Math.min((totalActual / target) * 100, 100) : 0;
 
             return (
-              <Card key={goal.id}>
+              <Card key={goal.id} className="group">
                 <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">{goal.name}</CardTitle>
-                    <Badge variant={STATUS_VARIANTS[goal.status]}>
-                      {STATUS_LABELS[goal.status]}
-                    </Badge>
+                  <div className="flex items-center justify-between gap-2">
+                    <CardTitle className="text-base">
+                      <Link href={`/metas/${goal.id}`} className="hover:underline">
+                        {goal.name}
+                      </Link>
+                    </CardTitle>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Badge variant={STATUS_VARIANTS[goal.status]}>
+                        {STATUS_LABELS[goal.status]}
+                      </Badge>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                        asChild
+                      >
+                        <Link href={`/metas/${goal.id}/editar`}>
+                          <Pencil className="h-4 w-4 text-muted-foreground" />
+                        </Link>
+                      </Button>
+                      <DeleteItemButton id={goal.id} endpoint="/goals" label={goal.name} />
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-3">
@@ -103,8 +121,17 @@ export default async function GoalsPage() {
                   </div>
 
                   {goal.notes && (
-                    <p className="text-xs text-muted-foreground border-t pt-2">{goal.notes}</p>
+                    <p className="text-xs text-muted-foreground">{goal.notes}</p>
                   )}
+
+                  <div className="border-t pt-3">
+                    <Button variant="outline" size="sm" className="w-full" asChild>
+                      <Link href={`/metas/${goal.id}`}>
+                        <Wallet className="h-4 w-4" />
+                        Ver aportes
+                      </Link>
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             );
