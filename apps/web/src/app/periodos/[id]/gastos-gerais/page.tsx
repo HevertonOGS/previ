@@ -69,9 +69,9 @@ export default async function GeneralExpensesPage({ params }: Props) {
         ) : (
           expenses.map((expense) => (
             <Card key={expense.id} className="group">
-              <CardContent className="flex items-center justify-between py-4 px-5">
-                <div>
-                  <p className="font-medium">{expense.name}</p>
+              <CardContent className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{expense.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {expense.paidAt
                       ? `Pago em ${new Date(expense.paidAt).toLocaleDateString('pt-BR')}`
@@ -80,7 +80,7 @@ export default async function GeneralExpensesPage({ params }: Props) {
                       : 'Sem data'}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center justify-end gap-2">
                   <div className="text-right">
                     <p className="font-semibold">
                       {formatCurrency(expense.actualAmount ?? expense.estimatedAmount)}
@@ -94,7 +94,7 @@ export default async function GeneralExpensesPage({ params }: Props) {
                   <Badge variant={expenseStatusVariant(expense.status)}>
                     {expense.status}
                   </Badge>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-100 transition-opacity shrink-0 md:opacity-0 md:group-hover:opacity-100" asChild>
                     <Link href={`/periodos/${id}/gastos-gerais/${expense.id}/editar`}>
                       <Pencil className="h-4 w-4 text-muted-foreground" />
                     </Link>

@@ -67,19 +67,19 @@ export default async function CurrentExpensesPage({ params }: Props) {
         ) : (
           expenses.map((expense) => (
             <Card key={expense.id} className="group">
-              <CardContent className="flex items-center justify-between py-4 px-5">
-                <div>
-                  <p className="font-medium">{expense.name}</p>
+              <CardContent className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{expense.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(expense.paidAt).toLocaleDateString('pt-BR')}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center justify-end gap-2">
                   <p className="font-semibold">{formatCurrency(expense.amount)}</p>
                   <Badge variant="secondary">
                     {PAYMENT_LABELS[expense.paymentMethod] ?? expense.paymentMethod}
                   </Badge>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-100 transition-opacity shrink-0 md:opacity-0 md:group-hover:opacity-100" asChild>
                     <Link href={`/periodos/${id}/gastos-correntes/${expense.id}/editar`}>
                       <Pencil className="h-4 w-4 text-muted-foreground" />
                     </Link>

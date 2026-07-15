@@ -82,7 +82,7 @@ export default async function GoalsPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                        className="h-8 w-8 opacity-100 transition-opacity shrink-0 md:opacity-0 md:group-hover:opacity-100"
                         asChild
                       >
                         <Link href={`/metas/${goal.id}/editar`}>
