@@ -1,27 +1,16 @@
 import Link from 'next/link';
-import { ArrowLeft, Plus, Pencil } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { generalExpensesService } from '../../../../services/general-expenses.service';
-import { Card, CardContent } from '../../../../components/ui/card';
-import { Badge } from '../../../../components/ui/badge';
+import { referenceService } from '../../../../services/reference.service';
 import { Button } from '../../../../components/ui/button';
-import { DeleteItemButton } from '../../../../components/features/delete-item-button';
-
-function formatCurrency(value: string | number) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value));
-}
-
-function expenseStatusVariant(status: string): 'success' | 'warning' | 'secondary' {
-  const s = status.toLowerCase();
-  if (s.includes('pago') || s.includes('paga')) return 'success';
-  if (s.includes('pend')) return 'warning';
-  return 'secondary';
-}
+import { GeneralExpensesBoard } from '../../../../components/features/general-expenses-board';
 
 type Props = { params: Promise<{ id: string }> };
 
 export default async function GeneralExpensesPage({ params }: Props) {
   const { id } = await params;
   let expenses: Awaited<ReturnType<typeof generalExpensesService.list>> = [];
+  let statusOptions: Awaited<ReturnType<typeof referenceService.expenseStatusOptions>> = [];
 
   try {
     expenses = await generalExpensesService.list(id);
@@ -29,11 +18,11 @@ export default async function GeneralExpensesPage({ params }: Props) {
     // API unavailable
   }
 
-  const totalPaid = expenses
-    .filter((e) => e.status === 'PAID')
-    .reduce((acc, e) => acc + Number(e.actualAmount ?? e.estimatedAmount), 0);
-
-  const totalEstimated = expenses.reduce((acc, e) => acc + Number(e.estimatedAmount), 0);
+  try {
+    statusOptions = await referenceService.expenseStatusOptions();
+  } catch {
+    // API unavailable
+  }
 
   return (
     <div className="flex flex-col gap-6 p-8">
@@ -52,60 +41,7 @@ export default async function GeneralExpensesPage({ params }: Props) {
         </Button>
       </div>
 
-      <div className="flex gap-4">
-        <div className="rounded-lg border bg-card px-5 py-3">
-          <p className="text-xs text-muted-foreground">Estimado</p>
-          <p className="text-xl font-bold">{formatCurrency(totalEstimated)}</p>
-        </div>
-        <div className="rounded-lg border bg-card px-5 py-3">
-          <p className="text-xs text-muted-foreground">Pago</p>
-          <p className="text-xl font-bold text-red-500">{formatCurrency(totalPaid)}</p>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        {expenses.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Nenhum gasto geral lançado.</p>
-        ) : (
-          expenses.map((expense) => (
-            <Card key={expense.id} className="group">
-              <CardContent className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="min-w-0">
-                  <p className="truncate font-medium">{expense.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {expense.paidAt
-                      ? `Pago em ${new Date(expense.paidAt).toLocaleDateString('pt-BR')}`
-                      : expense.expectedPayAt
-                      ? `Vence em ${new Date(expense.expectedPayAt).toLocaleDateString('pt-BR')}`
-                      : 'Sem data'}
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center justify-end gap-2">
-                  <div className="text-right">
-                    <p className="font-semibold">
-                      {formatCurrency(expense.actualAmount ?? expense.estimatedAmount)}
-                    </p>
-                    {expense.actualAmount && expense.actualAmount !== expense.estimatedAmount && (
-                      <p className="text-xs text-muted-foreground">
-                        Estimado: {formatCurrency(expense.estimatedAmount)}
-                      </p>
-                    )}
-                  </div>
-                  <Badge variant={expenseStatusVariant(expense.status)}>
-                    {expense.status}
-                  </Badge>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-100 transition-opacity shrink-0 md:opacity-0 md:group-hover:opacity-100" asChild>
-                    <Link href={`/periodos/${id}/gastos-gerais/${expense.id}/editar`}>
-                      <Pencil className="h-4 w-4 text-muted-foreground" />
-                    </Link>
-                  </Button>
-                  <DeleteItemButton id={expense.id} endpoint="/general-expenses" label={expense.name} />
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+      <GeneralExpensesBoard periodId={id} expenses={expenses} statusOptions={statusOptions} />
     </div>
   );
 }

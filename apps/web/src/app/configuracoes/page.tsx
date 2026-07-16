@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Check, X } from 'lucide-react';
-import { referenceService, type StatusOption, type PaymentMethodOption } from '../../services/reference.service';
+import { referenceService, type StatusOption, type StatusOptionWithColor, type PaymentMethodOption } from '../../services/reference.service';
 import type { Category, ExpenseType } from '../../lib/types';
+import { StatusOptionSection } from '../../components/features/status-option-section';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -195,8 +196,8 @@ export default function ConfiguracoesPage() {
   const [incomeCategories, setIncomeCategories] = useState<Category[]>([]);
   const [expenseCategories, setExpenseCategories] = useState<Category[]>([]);
   const [expenseTypes, setExpenseTypes] = useState<ExpenseType[]>([]);
-  const [incomeStatusOptions, setIncomeStatusOptions] = useState<StatusOption[]>([]);
-  const [expenseStatusOptions, setExpenseStatusOptions] = useState<StatusOption[]>([]);
+  const [incomeStatusOptions, setIncomeStatusOptions] = useState<StatusOptionWithColor[]>([]);
+  const [expenseStatusOptions, setExpenseStatusOptions] = useState<StatusOptionWithColor[]>([]);
   const [paymentMethodOptions, setPaymentMethodOptions] = useState<PaymentMethodOption[]>([]);
   const [sourceOptions, setSourceOptions] = useState<StatusOption[]>([]);
 
@@ -312,26 +313,11 @@ export default function ConfiguracoesPage() {
             <CardDescription>Ex: Pendente, Recebida, Parcialmente recebida…</CardDescription>
           </CardHeader>
           <CardContent>
-            {incomeStatusOptions.length === 0 ? (
-              <p className="text-sm text-muted-foreground pb-2">Nenhum status cadastrado.</p>
-            ) : (
-              <div className="flex flex-col">
-                {incomeStatusOptions.map((opt, i) => (
-                  <div key={opt.id}>
-                    <ListItem
-                      label={opt.name}
-                      onEdit={(name) => referenceService.createIncomeStatusOption(name).then(loadData)}
-                      onDelete={() => referenceService.deleteIncomeStatusOption(opt.id).then(loadData)}
-                    />
-                    {i < incomeStatusOptions.length - 1 && <Separator className="my-0.5 opacity-50" />}
-                  </div>
-                ))}
-              </div>
-            )}
-            <AddForm
-              nameLabel="Novo status"
-              namePlaceholder="Ex: Recebida, Cancelada…"
-              onAdd={async (name) => { await referenceService.createIncomeStatusOption(name); loadData(); }}
+            <StatusOptionSection
+              options={incomeStatusOptions}
+              onCreate={async (name, color) => { await referenceService.createIncomeStatusOption(name, color); loadData(); }}
+              onUpdate={async (id, name, color) => { await referenceService.updateIncomeStatusOption(id, name, color); loadData(); }}
+              onDelete={async (id) => { await referenceService.deleteIncomeStatusOption(id); loadData(); }}
             />
           </CardContent>
         </Card>
@@ -343,26 +329,11 @@ export default function ConfiguracoesPage() {
             <CardDescription>Ex: Estimado, Pendente, Pago, Cancelado…</CardDescription>
           </CardHeader>
           <CardContent>
-            {expenseStatusOptions.length === 0 ? (
-              <p className="text-sm text-muted-foreground pb-2">Nenhum status cadastrado.</p>
-            ) : (
-              <div className="flex flex-col">
-                {expenseStatusOptions.map((opt, i) => (
-                  <div key={opt.id}>
-                    <ListItem
-                      label={opt.name}
-                      onEdit={(name) => referenceService.createExpenseStatusOption(name).then(loadData)}
-                      onDelete={() => referenceService.deleteExpenseStatusOption(opt.id).then(loadData)}
-                    />
-                    {i < expenseStatusOptions.length - 1 && <Separator className="my-0.5 opacity-50" />}
-                  </div>
-                ))}
-              </div>
-            )}
-            <AddForm
-              nameLabel="Novo status"
-              namePlaceholder="Ex: Pago, Cancelado…"
-              onAdd={async (name) => { await referenceService.createExpenseStatusOption(name); loadData(); }}
+            <StatusOptionSection
+              options={expenseStatusOptions}
+              onCreate={async (name, color) => { await referenceService.createExpenseStatusOption(name, color); loadData(); }}
+              onUpdate={async (id, name, color) => { await referenceService.updateExpenseStatusOption(id, name, color); loadData(); }}
+              onDelete={async (id) => { await referenceService.deleteExpenseStatusOption(id); loadData(); }}
             />
           </CardContent>
         </Card>

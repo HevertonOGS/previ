@@ -14,6 +14,14 @@ describe('ReferenceController', () => {
     findAllExpenseTypes: jest.fn(),
     findExpenseTypeById: jest.fn(),
     deleteExpenseType: jest.fn(),
+    createIncomeStatusOption: jest.fn(),
+    findAllIncomeStatusOptions: jest.fn(),
+    updateIncomeStatusOption: jest.fn(),
+    deleteIncomeStatusOption: jest.fn(),
+    createExpenseStatusOption: jest.fn(),
+    findAllExpenseStatusOptions: jest.fn(),
+    updateExpenseStatusOption: jest.fn(),
+    deleteExpenseStatusOption: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -104,6 +112,84 @@ describe('ReferenceController', () => {
       const result = await controller.deleteExpenseType('type-1');
 
       expect(result).toEqual(mockType);
+    });
+  });
+
+  describe('IncomeStatusOptions', () => {
+    const mockOption = { id: 'inc-status-1', name: 'Recebida', color: 'success', createdAt: new Date() };
+
+    it('should create an income status option', async () => {
+      mockService.createIncomeStatusOption.mockResolvedValue(mockOption);
+
+      const result = await controller.createIncomeStatusOption({ name: 'Recebida', color: 'success' });
+
+      expect(result).toEqual(mockOption);
+      expect(mockService.createIncomeStatusOption).toHaveBeenCalledWith({ name: 'Recebida', color: 'success' });
+    });
+
+    it('should return all income status options', async () => {
+      mockService.findAllIncomeStatusOptions.mockResolvedValue([mockOption]);
+
+      const result = await controller.findAllIncomeStatusOptions();
+
+      expect(result).toEqual([mockOption]);
+    });
+
+    it('should update an income status option', async () => {
+      const updated = { ...mockOption, color: 'info' };
+      mockService.updateIncomeStatusOption.mockResolvedValue(updated);
+
+      const result = await controller.updateIncomeStatusOption('inc-status-1', { color: 'info' });
+
+      expect(result).toEqual(updated);
+      expect(mockService.updateIncomeStatusOption).toHaveBeenCalledWith('inc-status-1', { color: 'info' });
+    });
+
+    it('should delete an income status option', async () => {
+      mockService.deleteIncomeStatusOption.mockResolvedValue(mockOption);
+
+      const result = await controller.deleteIncomeStatusOption('inc-status-1');
+
+      expect(result).toEqual(mockOption);
+    });
+  });
+
+  describe('ExpenseStatusOptions', () => {
+    const mockOption = { id: 'exp-status-1', name: 'Pago', color: 'success', createdAt: new Date() };
+
+    it('should create an expense status option', async () => {
+      mockService.createExpenseStatusOption.mockResolvedValue(mockOption);
+
+      const result = await controller.createExpenseStatusOption({ name: 'Pago', color: 'success' });
+
+      expect(result).toEqual(mockOption);
+      expect(mockService.createExpenseStatusOption).toHaveBeenCalledWith({ name: 'Pago', color: 'success' });
+    });
+
+    it('should return all expense status options', async () => {
+      mockService.findAllExpenseStatusOptions.mockResolvedValue([mockOption]);
+
+      const result = await controller.findAllExpenseStatusOptions();
+
+      expect(result).toEqual([mockOption]);
+    });
+
+    it('should update an expense status option', async () => {
+      const updated = { ...mockOption, color: 'warning' };
+      mockService.updateExpenseStatusOption.mockResolvedValue(updated);
+
+      const result = await controller.updateExpenseStatusOption('exp-status-1', { color: 'warning' });
+
+      expect(result).toEqual(updated);
+      expect(mockService.updateExpenseStatusOption).toHaveBeenCalledWith('exp-status-1', { color: 'warning' });
+    });
+
+    it('should delete an expense status option', async () => {
+      mockService.deleteExpenseStatusOption.mockResolvedValue(mockOption);
+
+      const result = await controller.deleteExpenseStatusOption('exp-status-1');
+
+      expect(result).toEqual(mockOption);
     });
   });
 });

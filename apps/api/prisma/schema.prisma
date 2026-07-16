@@ -42,6 +42,7 @@ model Category {
 model IncomeStatusOption {
   id        String   @id @default(uuid())
   name      String   @unique
+  color     String   @default("secondary")
   createdAt DateTime @default(now())
 }
 
@@ -49,6 +50,7 @@ model IncomeStatusOption {
 model ExpenseStatusOption {
   id        String   @id @default(uuid())
   name      String   @unique
+  color     String   @default("secondary")
   createdAt DateTime @default(now())
 }
 

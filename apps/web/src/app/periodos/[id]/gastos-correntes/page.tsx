@@ -1,23 +1,8 @@
 import Link from 'next/link';
-import { ArrowLeft, Plus, Pencil } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { currentExpensesService } from '../../../../services/current-expenses.service';
-import { Card, CardContent } from '../../../../components/ui/card';
-import { Badge } from '../../../../components/ui/badge';
 import { Button } from '../../../../components/ui/button';
-import { DeleteItemButton } from '../../../../components/features/delete-item-button';
-
-function formatCurrency(value: string | number) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value));
-}
-
-const PAYMENT_LABELS: Record<string, string> = {
-  DEBIT: 'Débito',
-  CREDIT: 'Crédito',
-  PIX: 'PIX',
-  CASH: 'Dinheiro',
-  BENEFITS: 'Benefícios',
-  OTHER: 'Outro',
-};
+import { CurrentExpensesBoard } from '../../../../components/features/current-expenses-board';
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -30,8 +15,6 @@ export default async function CurrentExpensesPage({ params }: Props) {
   } catch {
     // API unavailable
   }
-
-  const total = expenses.reduce((acc, e) => acc + Number(e.amount), 0);
 
   return (
     <div className="flex flex-col gap-6 p-8">
@@ -50,47 +33,7 @@ export default async function CurrentExpensesPage({ params }: Props) {
         </Button>
       </div>
 
-      <div className="flex gap-4">
-        <div className="rounded-lg border bg-card px-5 py-3">
-          <p className="text-xs text-muted-foreground">Total gasto</p>
-          <p className="text-xl font-bold text-red-500">{formatCurrency(total)}</p>
-        </div>
-        <div className="rounded-lg border bg-card px-5 py-3">
-          <p className="text-xs text-muted-foreground">Lançamentos</p>
-          <p className="text-xl font-bold">{expenses.length}</p>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        {expenses.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Nenhum gasto corrente lançado.</p>
-        ) : (
-          expenses.map((expense) => (
-            <Card key={expense.id} className="group">
-              <CardContent className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="min-w-0">
-                  <p className="truncate font-medium">{expense.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(expense.paidAt).toLocaleDateString('pt-BR')}
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center justify-end gap-2">
-                  <p className="font-semibold">{formatCurrency(expense.amount)}</p>
-                  <Badge variant="secondary">
-                    {PAYMENT_LABELS[expense.paymentMethod] ?? expense.paymentMethod}
-                  </Badge>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-100 transition-opacity shrink-0 md:opacity-0 md:group-hover:opacity-100" asChild>
-                    <Link href={`/periodos/${id}/gastos-correntes/${expense.id}/editar`}>
-                      <Pencil className="h-4 w-4 text-muted-foreground" />
-                    </Link>
-                  </Button>
-                  <DeleteItemButton id={expense.id} endpoint="/current-expenses" label={expense.name} />
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+      <CurrentExpensesBoard periodId={id} expenses={expenses} />
     </div>
   );
 }

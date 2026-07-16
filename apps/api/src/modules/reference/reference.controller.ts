@@ -11,7 +11,7 @@ import {
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { IsString, IsNotEmpty } from 'class-validator';
 import { ReferenceService } from './reference.service';
-import { CreateCategoryDto, CreateExpenseTypeDto } from './dto';
+import { CreateCategoryDto, CreateExpenseTypeDto, CreateStatusOptionDto, UpdateStatusOptionDto } from './dto';
 
 class NameDto { @IsString() @IsNotEmpty() name!: string; }
 
@@ -106,9 +106,15 @@ export class ReferenceController {
   @Post('income-status-options')
   @ApiTags('Options')
   @ApiOperation({ summary: 'Create an income status option' })
-  @ApiBody({ type: NameDto })
-  public createIncomeStatusOption(@Body() dto: NameDto) {
-    return this.service.createIncomeStatusOption(dto.name);
+  public createIncomeStatusOption(@Body() dto: CreateStatusOptionDto) {
+    return this.service.createIncomeStatusOption(dto);
+  }
+
+  @Patch('income-status-options/:id')
+  @ApiTags('Options')
+  @ApiOperation({ summary: 'Update an income status option' })
+  public updateIncomeStatusOption(@Param('id') id: string, @Body() dto: UpdateStatusOptionDto) {
+    return this.service.updateIncomeStatusOption(id, dto);
   }
 
   @Delete('income-status-options/:id')
@@ -130,9 +136,15 @@ export class ReferenceController {
   @Post('expense-status-options')
   @ApiTags('Options')
   @ApiOperation({ summary: 'Create an expense status option' })
-  @ApiBody({ type: NameDto })
-  public createExpenseStatusOption(@Body() dto: NameDto) {
-    return this.service.createExpenseStatusOption(dto.name);
+  public createExpenseStatusOption(@Body() dto: CreateStatusOptionDto) {
+    return this.service.createExpenseStatusOption(dto);
+  }
+
+  @Patch('expense-status-options/:id')
+  @ApiTags('Options')
+  @ApiOperation({ summary: 'Update an expense status option' })
+  public updateExpenseStatusOption(@Param('id') id: string, @Body() dto: UpdateStatusOptionDto) {
+    return this.service.updateExpenseStatusOption(id, dto);
   }
 
   @Delete('expense-status-options/:id')

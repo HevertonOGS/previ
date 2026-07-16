@@ -1,27 +1,16 @@
 import Link from 'next/link';
-import { ArrowLeft, Plus, Pencil } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { incomesService } from '../../../../services/incomes.service';
-import { Card, CardContent } from '../../../../components/ui/card';
-import { Badge } from '../../../../components/ui/badge';
+import { referenceService } from '../../../../services/reference.service';
 import { Button } from '../../../../components/ui/button';
-import { DeleteItemButton } from '../../../../components/features/delete-item-button';
-
-function formatCurrency(value: string | number) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value));
-}
-
-function incomeStatusVariant(status: string): 'success' | 'warning' | 'secondary' {
-  const s = status.toLowerCase();
-  if (s.includes('receb') || s.includes('pago')) return 'success';
-  if (s.includes('pend')) return 'warning';
-  return 'secondary';
-}
+import { IncomesBoard } from '../../../../components/features/incomes-board';
 
 type Props = { params: Promise<{ id: string }> };
 
 export default async function IncomesPage({ params }: Props) {
   const { id } = await params;
   let incomes: Awaited<ReturnType<typeof incomesService.list>> = [];
+  let statusOptions: Awaited<ReturnType<typeof referenceService.incomeStatusOptions>> = [];
 
   try {
     incomes = await incomesService.list(id);
@@ -29,11 +18,11 @@ export default async function IncomesPage({ params }: Props) {
     // API unavailable
   }
 
-  const totalReceived = incomes
-    .filter((i) => i.status === 'RECEIVED')
-    .reduce((acc, i) => acc + Number(i.actualAmount ?? i.expectedAmount), 0);
-
-  const totalExpected = incomes.reduce((acc, i) => acc + Number(i.expectedAmount), 0);
+  try {
+    statusOptions = await referenceService.incomeStatusOptions();
+  } catch {
+    // API unavailable
+  }
 
   return (
     <div className="flex flex-col gap-6 p-8">
@@ -52,54 +41,7 @@ export default async function IncomesPage({ params }: Props) {
         </Button>
       </div>
 
-      <div className="flex gap-4">
-        <div className="rounded-lg border bg-card px-5 py-3">
-          <p className="text-xs text-muted-foreground">Previsto</p>
-          <p className="text-xl font-bold">{formatCurrency(totalExpected)}</p>
-        </div>
-        <div className="rounded-lg border bg-card px-5 py-3">
-          <p className="text-xs text-muted-foreground">Recebido</p>
-          <p className="text-xl font-bold text-green-600">{formatCurrency(totalReceived)}</p>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        {incomes.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Nenhuma receita lançada.</p>
-        ) : (
-          incomes.map((income) => (
-            <Card key={income.id} className="group">
-              <CardContent className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="min-w-0">
-                  <p className="truncate font-medium">{income.name}</p>
-                  <p className="text-xs text-muted-foreground">{income.category}</p>
-                </div>
-                <div className="flex flex-wrap items-center justify-end gap-2">
-                  <div className="text-right">
-                    <p className="font-semibold">
-                      {formatCurrency(income.actualAmount ?? income.expectedAmount)}
-                    </p>
-                    {income.actualAmount && income.actualAmount !== income.expectedAmount && (
-                      <p className="text-xs text-muted-foreground">
-                        Previsto: {formatCurrency(income.expectedAmount)}
-                      </p>
-                    )}
-                  </div>
-                  <Badge variant={incomeStatusVariant(income.status)}>
-                    {income.status}
-                  </Badge>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-100 transition-opacity shrink-0 md:opacity-0 md:group-hover:opacity-100" asChild>
-                    <Link href={`/periodos/${id}/receitas/${income.id}/editar`}>
-                      <Pencil className="h-4 w-4 text-muted-foreground" />
-                    </Link>
-                  </Button>
-                  <DeleteItemButton id={income.id} endpoint="/incomes" label={income.name} />
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+      <IncomesBoard periodId={id} incomes={incomes} statusOptions={statusOptions} />
     </div>
   );
 }

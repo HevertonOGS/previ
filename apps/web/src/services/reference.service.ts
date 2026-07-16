@@ -1,7 +1,9 @@
 import { apiClient } from '../lib/http-client';
 import type { Category, ExpenseType } from '../lib/types';
+import type { StatusColor } from 'shared-types';
 
 export type StatusOption = { id: string; name: string };
+export type StatusOptionWithColor = { id: string; name: string; color: StatusColor };
 export type PaymentMethodOption = { id: string; name: string };
 
 export class ReferenceService {
@@ -40,30 +42,38 @@ export class ReferenceService {
 
   // ── Income Status Options ────────────────────────────────────────────
 
-  public incomeStatusOptions(): Promise<StatusOption[]> {
-    return apiClient.get<StatusOption[]>('/reference/income-status-options');
+  public incomeStatusOptions(): Promise<StatusOptionWithColor[]> {
+    return apiClient.get<StatusOptionWithColor[]>('/reference/income-status-options');
   }
 
-  public createIncomeStatusOption(name: string): Promise<StatusOption> {
-    return apiClient.post<StatusOption>('/reference/income-status-options', { name });
+  public createIncomeStatusOption(name: string, color?: StatusColor): Promise<StatusOptionWithColor> {
+    return apiClient.post<StatusOptionWithColor>('/reference/income-status-options', { name, color });
   }
 
-  public deleteIncomeStatusOption(id: string): Promise<StatusOption> {
-    return apiClient.delete<StatusOption>(`/reference/income-status-options/${id}`);
+  public updateIncomeStatusOption(id: string, name: string, color: StatusColor): Promise<StatusOptionWithColor> {
+    return apiClient.patch<StatusOptionWithColor>(`/reference/income-status-options/${id}`, { name, color });
+  }
+
+  public deleteIncomeStatusOption(id: string): Promise<StatusOptionWithColor> {
+    return apiClient.delete<StatusOptionWithColor>(`/reference/income-status-options/${id}`);
   }
 
   // ── Expense Status Options ───────────────────────────────────────────
 
-  public expenseStatusOptions(): Promise<StatusOption[]> {
-    return apiClient.get<StatusOption[]>('/reference/expense-status-options');
+  public expenseStatusOptions(): Promise<StatusOptionWithColor[]> {
+    return apiClient.get<StatusOptionWithColor[]>('/reference/expense-status-options');
   }
 
-  public createExpenseStatusOption(name: string): Promise<StatusOption> {
-    return apiClient.post<StatusOption>('/reference/expense-status-options', { name });
+  public createExpenseStatusOption(name: string, color?: StatusColor): Promise<StatusOptionWithColor> {
+    return apiClient.post<StatusOptionWithColor>('/reference/expense-status-options', { name, color });
   }
 
-  public deleteExpenseStatusOption(id: string): Promise<StatusOption> {
-    return apiClient.delete<StatusOption>(`/reference/expense-status-options/${id}`);
+  public updateExpenseStatusOption(id: string, name: string, color: StatusColor): Promise<StatusOptionWithColor> {
+    return apiClient.patch<StatusOptionWithColor>(`/reference/expense-status-options/${id}`, { name, color });
+  }
+
+  public deleteExpenseStatusOption(id: string): Promise<StatusOptionWithColor> {
+    return apiClient.delete<StatusOptionWithColor>(`/reference/expense-status-options/${id}`);
   }
 
   // ── Payment Method Options ───────────────────────────────────────────

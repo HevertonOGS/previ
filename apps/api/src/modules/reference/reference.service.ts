@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateCategoryDto, CreateExpenseTypeDto } from './dto';
+import { CreateCategoryDto, CreateExpenseTypeDto, CreateStatusOptionDto, UpdateStatusOptionDto } from './dto';
 
 @Injectable()
 export class ReferenceService {
@@ -51,12 +51,18 @@ export class ReferenceService {
 
   // ── Income Status Options ────────────────────────────────────────────
 
-  public createIncomeStatusOption(name: string) {
-    return this.prisma.incomeStatusOption.create({ data: { id: crypto.randomUUID(), name } });
+  public createIncomeStatusOption(dto: CreateStatusOptionDto) {
+    return this.prisma.incomeStatusOption.create({
+      data: { id: crypto.randomUUID(), name: dto.name, color: dto.color },
+    });
   }
 
   public findAllIncomeStatusOptions() {
     return this.prisma.incomeStatusOption.findMany({ orderBy: { name: 'asc' } });
+  }
+
+  public updateIncomeStatusOption(id: string, dto: UpdateStatusOptionDto) {
+    return this.prisma.incomeStatusOption.update({ where: { id }, data: dto });
   }
 
   public deleteIncomeStatusOption(id: string) {
@@ -65,12 +71,18 @@ export class ReferenceService {
 
   // ── Expense Status Options ───────────────────────────────────────────
 
-  public createExpenseStatusOption(name: string) {
-    return this.prisma.expenseStatusOption.create({ data: { id: crypto.randomUUID(), name } });
+  public createExpenseStatusOption(dto: CreateStatusOptionDto) {
+    return this.prisma.expenseStatusOption.create({
+      data: { id: crypto.randomUUID(), name: dto.name, color: dto.color },
+    });
   }
 
   public findAllExpenseStatusOptions() {
     return this.prisma.expenseStatusOption.findMany({ orderBy: { name: 'asc' } });
+  }
+
+  public updateExpenseStatusOption(id: string, dto: UpdateStatusOptionDto) {
+    return this.prisma.expenseStatusOption.update({ where: { id }, data: dto });
   }
 
   public deleteExpenseStatusOption(id: string) {

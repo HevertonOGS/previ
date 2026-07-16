@@ -56,3 +56,4 @@ npx nx dev web             # Start frontend (port 4200)
 - Shared types between api and web go in `libs/shared-types`.
 - UI primitives go in `libs/ui`; feature-specific components go in `apps/web/src/components/features/`.
 - **Responsive design**: All pages must be usable on smartphones. Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`) and avoid fixed widths that break on small screens. Test layouts at mobile width before considering a page complete.
+- **Security and scalability**: Always design and implement features with security and scalability in mind. Validate and sanitize all inputs at API boundaries, avoid exposing sensitive data, follow least-privilege access patterns, and prefer queries/patterns that scale with data volume (pagination, indexing, avoiding N+1 queries) over shortcuts that only work for small datasets.
