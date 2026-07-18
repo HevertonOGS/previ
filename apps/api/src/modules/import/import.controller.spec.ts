@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { GoalsImportService } from './goals-import.service';
 import { ImportController } from './import.controller';
 import { ImportService } from './import.service';
-import { NotionImportService } from './notion-import.service';
+import { SpreadsheetImportService } from './spreadsheet-import.service';
 
 describe('ImportController', () => {
   let controller: ImportController;
@@ -12,12 +13,14 @@ describe('ImportController', () => {
     confirmImport: jest.fn(),
   };
 
-  const mockNotionService = {
+  const mockSpreadsheetService = {
     parseFile: jest.fn(),
-    confirmIncomes: jest.fn(),
-    confirmGeneralExpenses: jest.fn(),
-    confirmCurrentExpenses: jest.fn(),
-    confirmGoals: jest.fn(),
+    confirm: jest.fn(),
+  };
+
+  const mockGoalsService = {
+    parseFile: jest.fn(),
+    confirm: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -25,7 +28,8 @@ describe('ImportController', () => {
       controllers: [ImportController],
       providers: [
         { provide: ImportService, useValue: mockService },
-        { provide: NotionImportService, useValue: mockNotionService },
+        { provide: SpreadsheetImportService, useValue: mockSpreadsheetService },
+        { provide: GoalsImportService, useValue: mockGoalsService },
       ],
     }).compile();
 
@@ -76,16 +80,72 @@ describe('ImportController', () => {
     });
   });
 
-  describe('parseNotion', () => {
-    it('should parse a Notion CSV file and return rows', async () => {
-      const mockRows = [{ tempId: 'r-1', name: 'Salário', category: 'Salário', expectedAmount: 8500, status: 'RECEIVED' }];
-      mockNotionService.parseFile.mockReturnValue(mockRows);
+  describe('parseSpreadsheet', () => {
+    it('should parse a spreadsheet CSV file and return headers, rows and a suggested mapping', () => {
+      const mockResult = {
+        headers: ['Gasto', 'Valor'],
+        rows: [{ tempId: 'r-1', raw: { Gasto: 'Mercado', Valor: '150' } }],
+        suggestedMapping: { name: 'Gasto', amount: 'Valor' },
+      };
+      mockSpreadsheetService.parseFile.mockReturnValue(mockResult);
 
-      const mockFile = { buffer: Buffer.from('csv'), originalname: 'receitas.csv' } as Express.Multer.File;
-      const result = await controller.parseNotion(mockFile, 'incomes');
+      const mockFile = { buffer: Buffer.from('csv'), originalname: 'gastos.csv' } as Express.Multer.File;
+      const result = controller.parseSpreadsheet(mockFile, 'current-expense');
+
+      expect(result).toEqual(mockResult);
+      expect(mockSpreadsheetService.parseFile).toHaveBeenCalledWith(mockFile.buffer, 'current-expense');
+    });
+
+    it('should reject an invalid entity type', () => {
+      const mockFile = { buffer: Buffer.from('csv'), originalname: 'gastos.csv' } as Express.Multer.File;
+
+      expect(() => controller.parseSpreadsheet(mockFile, 'unknown' as never)).toThrow();
+    });
+  });
+
+  describe('confirmSpreadsheet', () => {
+    it('should confirm the spreadsheet import and return created/skipped counts', async () => {
+      mockSpreadsheetService.confirm.mockResolvedValue({
+        created: 2,
+        skipped: [{ tempId: 'r-3', missingFields: ['paidAt'] }],
+      });
+
+      const dto = {
+        entityType: 'current-expense' as const,
+        periodId: 'period-1',
+        mapping: { name: 'Gasto' },
+        rows: [],
+      };
+
+      const result = await controller.confirmSpreadsheet(dto);
+
+      expect(result).toEqual({ created: 2, skipped: [{ tempId: 'r-3', missingFields: ['paidAt'] }] });
+      expect(mockSpreadsheetService.confirm).toHaveBeenCalledWith(dto);
+    });
+  });
+
+  describe('parseGoals', () => {
+    it('should parse a goals CSV file and return rows', () => {
+      const mockRows = [{ tempId: 'g-1', year: 2026, month: 1, plannedAmount: 500, actualAmount: null }];
+      mockGoalsService.parseFile.mockReturnValue(mockRows);
+
+      const mockFile = { buffer: Buffer.from('csv'), originalname: 'metas.csv' } as Express.Multer.File;
+      const result = controller.parseGoals(mockFile);
 
       expect(result).toEqual({ rows: mockRows });
-      expect(mockNotionService.parseFile).toHaveBeenCalledWith(mockFile.buffer, 'incomes');
+      expect(mockGoalsService.parseFile).toHaveBeenCalledWith(mockFile.buffer);
+    });
+  });
+
+  describe('confirmGoals', () => {
+    it('should confirm goal entries and return count', async () => {
+      mockGoalsService.confirm.mockResolvedValue({ created: 3 });
+
+      const dto = { goalId: 'goal-1', rows: [] };
+      const result = await controller.confirmGoals(dto);
+
+      expect(result).toEqual({ created: 3 });
+      expect(mockGoalsService.confirm).toHaveBeenCalledWith(dto);
     });
   });
 });

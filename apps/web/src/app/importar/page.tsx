@@ -1,6 +1,7 @@
 'use client';
 
-import { Upload, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, X, CheckCircle, AlertCircle, FileSpreadsheet } from 'lucide-react';
+import Link from 'next/link';
 import { useState, useRef, useEffect, type JSX } from 'react';
 
 import { Badge } from '../../components/ui/badge';
@@ -331,6 +332,20 @@ export default function ImportPage(): JSX.Element {
           </div>
         </CardContent>
       </Card>
+
+      <Link href="/importar/spreadsheet">
+        <Card className="hover:border-primary/50 hover:bg-accent/30 transition-colors cursor-pointer">
+          <CardContent className="flex items-center gap-3 py-4 px-4">
+            <FileSpreadsheet className="h-8 w-8 text-muted-foreground shrink-0" />
+            <div>
+              <p className="font-medium">Importar de planilha (Receitas, Gastos, Metas)</p>
+              <p className="text-sm text-muted-foreground">
+                Para planilhas com colunas de tipo, categoria e forma de pagamento por linha — mapeamento de colunas flexível.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
     </div>
   );
 }

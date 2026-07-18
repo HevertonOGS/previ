@@ -10,31 +10,25 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 
-import { ConfirmImportDto } from './dto';
-import {
-  ConfirmNotionIncomesDto,
-  ConfirmNotionGeneralExpensesDto,
-  ConfirmNotionCurrentExpensesDto,
-  ConfirmNotionGoalsDto,
-} from './dto/confirm-notion-import.dto';
-import { ImportService, type StatementFileType } from './import.service';
-import { NotionImportService, type NotionTableType } from './notion-import.service';
-import type {
-  ParsedNotionIncome,
-  ParsedNotionGeneralExpense,
-  ParsedNotionCurrentExpense,
-  ParsedNotionGoalEntry,
-} from './parsers/notion.parser';
-import type { ParsedTransaction } from './parsers/ofx.parser';
+import type { ImportEntityType } from 'shared-types';
 
-const NOTION_TYPES: NotionTableType[] = ['incomes', 'general-expenses', 'current-expenses', 'goals'];
+import { ConfirmGoalsImportDto, ConfirmImportDto, ConfirmSpreadsheetImportDto } from './dto';
+import { GoalsImportService } from './goals-import.service';
+import { ImportService, type StatementFileType } from './import.service';
+import type { ParsedGoalEntry } from './parsers/goals.parser';
+import type { ParsedTransaction } from './parsers/ofx.parser';
+import type { ParsedSpreadsheet } from './parsers/spreadsheet.parser';
+import { SpreadsheetImportService, type SkippedRow } from './spreadsheet-import.service';
+
+const IMPORT_ENTITY_TYPES: ImportEntityType[] = ['income', 'general-expense', 'current-expense'];
 
 @ApiTags('Import')
 @Controller('import')
 export class ImportController {
   public constructor(
     private readonly service: ImportService,
-    private readonly notionService: NotionImportService,
+    private readonly spreadsheetService: SpreadsheetImportService,
+    private readonly goalsService: GoalsImportService,
   ) {}
 
   // ── Bank statement ──────────────────────────────────────────────────────────
@@ -59,58 +53,46 @@ export class ImportController {
     return this.service.confirmImport(dto);
   }
 
-  // ── Notion ──────────────────────────────────────────────────────────────────
+  // ── Spreadsheet (flexible column mapping) ─────────────────────────────────────
 
-  @Post('notion/parse')
-  @ApiOperation({ summary: 'Upload and parse a Notion CSV export' })
+  @Post('spreadsheet/parse')
+  @ApiOperation({ summary: 'Upload and parse a spreadsheet (CSV) for a given entity type' })
   @ApiConsumes('multipart/form-data')
-  @ApiQuery({ name: 'type', enum: NOTION_TYPES })
+  @ApiQuery({ name: 'entityType', enum: IMPORT_ENTITY_TYPES })
   @ApiBody({ schema: { type: 'object', properties: { file: { type: 'string', format: 'binary' } } } })
   @UseInterceptors(FileInterceptor('file'))
-  public parseNotion(
+  public parseSpreadsheet(
     @UploadedFile() file: Express.Multer.File,
-    @Query('type') type: NotionTableType,
-  ): {
-    rows:
-      | ParsedNotionIncome[]
-      | ParsedNotionGeneralExpense[]
-      | ParsedNotionCurrentExpense[]
-      | ParsedNotionGoalEntry[];
-  } {
+    @Query('entityType') entityType: ImportEntityType,
+  ): ParsedSpreadsheet {
     if (!file) throw new BadRequestException('No file uploaded');
-    if (!NOTION_TYPES.includes(type)) throw new BadRequestException('Invalid table type');
-    return { rows: this.notionService.parseFile(file.buffer, type) };
+    if (!IMPORT_ENTITY_TYPES.includes(entityType)) throw new BadRequestException('Invalid entity type');
+    return this.spreadsheetService.parseFile(file.buffer, entityType);
   }
 
-  @Post('notion/incomes/confirm')
-  @ApiOperation({ summary: 'Save confirmed Notion incomes' })
-  public async confirmNotionIncomes(
-    @Body() dto: ConfirmNotionIncomesDto,
-  ): Promise<{ created: number }> {
-    return this.notionService.confirmIncomes(dto);
+  @Post('spreadsheet/confirm')
+  @ApiOperation({ summary: 'Save confirmed spreadsheet rows using a user-confirmed column mapping' })
+  public async confirmSpreadsheet(
+    @Body() dto: ConfirmSpreadsheetImportDto,
+  ): Promise<{ created: number; skipped: SkippedRow[] }> {
+    return this.spreadsheetService.confirm(dto);
   }
 
-  @Post('notion/general-expenses/confirm')
-  @ApiOperation({ summary: 'Save confirmed Notion general expenses' })
-  public async confirmNotionGeneralExpenses(
-    @Body() dto: ConfirmNotionGeneralExpensesDto,
-  ): Promise<{ created: number }> {
-    return this.notionService.confirmGeneralExpenses(dto);
+  // ── Goals ───────────────────────────────────────────────────────────────────
+
+  @Post('goals/parse')
+  @ApiOperation({ summary: 'Upload and parse a goal entries CSV' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ schema: { type: 'object', properties: { file: { type: 'string', format: 'binary' } } } })
+  @UseInterceptors(FileInterceptor('file'))
+  public parseGoals(@UploadedFile() file: Express.Multer.File): { rows: ParsedGoalEntry[] } {
+    if (!file) throw new BadRequestException('No file uploaded');
+    return { rows: this.goalsService.parseFile(file.buffer) };
   }
 
-  @Post('notion/current-expenses/confirm')
-  @ApiOperation({ summary: 'Save confirmed Notion current expenses' })
-  public async confirmNotionCurrentExpenses(
-    @Body() dto: ConfirmNotionCurrentExpensesDto,
-  ): Promise<{ created: number }> {
-    return this.notionService.confirmCurrentExpenses(dto);
-  }
-
-  @Post('notion/goals/confirm')
-  @ApiOperation({ summary: 'Save confirmed Notion goal entries' })
-  public async confirmNotionGoals(
-    @Body() dto: ConfirmNotionGoalsDto,
-  ): Promise<{ created: number }> {
-    return this.notionService.confirmGoals(dto);
+  @Post('goals/confirm')
+  @ApiOperation({ summary: 'Save confirmed goal entries' })
+  public async confirmGoals(@Body() dto: ConfirmGoalsImportDto): Promise<{ created: number }> {
+    return this.goalsService.confirm(dto);
   }
 }
