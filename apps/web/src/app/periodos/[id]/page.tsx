@@ -1,6 +1,7 @@
 import { ArrowLeft, TrendingUp, Receipt, ShoppingCart, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import type { JSX } from 'react';
 
 import { DeletePeriodButton } from '../../../components/features/delete-period-button';
 import { Badge } from '../../../components/ui/badge';

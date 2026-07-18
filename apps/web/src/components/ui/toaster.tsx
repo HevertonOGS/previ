@@ -1,5 +1,7 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import { useToast } from '../../hooks/use-toast';
 
 import {

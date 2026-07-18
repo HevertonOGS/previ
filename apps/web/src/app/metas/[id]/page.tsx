@@ -1,6 +1,7 @@
 import { ArrowLeft, Target } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import type { JSX } from 'react';
 
 import { DeleteItemButton } from '../../../components/features/delete-item-button';
 import { GoalEntryFormDialog } from '../../../components/features/goal-entry-form-dialog';

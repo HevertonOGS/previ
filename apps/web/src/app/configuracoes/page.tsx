@@ -1,7 +1,7 @@
 'use client';
 
 import { Plus, Pencil, Trash2, Check, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type JSX } from 'react';
 
 import { StatusOptionSection } from '../../components/features/status-option-section';
 import { Button } from '../../components/ui/button';

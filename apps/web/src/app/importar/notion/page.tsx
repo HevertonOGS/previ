@@ -1,7 +1,7 @@
 'use client';
 
 import { Upload, CheckCircle, X } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, type JSX } from 'react';
 
 import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/button';

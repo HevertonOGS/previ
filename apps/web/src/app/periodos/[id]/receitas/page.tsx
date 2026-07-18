@@ -1,5 +1,6 @@
 import { ArrowLeft, Plus } from 'lucide-react';
 import Link from 'next/link';
+import type { JSX } from 'react';
 
 import { IncomesBoard } from '../../../../components/features/incomes-board';
 import { Button } from '../../../../components/ui/button';

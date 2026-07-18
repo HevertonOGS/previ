@@ -1,5 +1,6 @@
 import { CalendarDays, TrendingUp, ShoppingCart, Target } from 'lucide-react';
 import Link from 'next/link';
+import type { JSX } from 'react';
 
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';

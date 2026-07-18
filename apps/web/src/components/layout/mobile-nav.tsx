@@ -3,6 +3,7 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Menu, X } from 'lucide-react';
 import * as React from 'react';
+import type { JSX } from 'react';
 
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';

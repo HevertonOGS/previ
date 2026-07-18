@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import type { JSX } from 'react';
 
 import { MobileNav } from '../components/layout/mobile-nav';
 import { Sidebar } from '../components/layout/sidebar';

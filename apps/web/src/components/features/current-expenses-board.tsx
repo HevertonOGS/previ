@@ -2,7 +2,7 @@
 
 import { Pencil } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type JSX } from 'react';
 
 import type { CurrentExpense } from '../../lib/types';
 import { Badge } from '../ui/badge';

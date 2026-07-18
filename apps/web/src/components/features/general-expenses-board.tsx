@@ -2,7 +2,7 @@
 
 import { Pencil } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type JSX } from 'react';
 
 import { statusColorMeta } from '../../lib/status-colors';
 import type { GeneralExpense } from '../../lib/types';

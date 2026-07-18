@@ -2,7 +2,7 @@
 
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, type JSX } from 'react';
 
 import { periodsService } from '../../services/periods.service';
 import { Button } from '../ui/button';

@@ -1,5 +1,6 @@
 import { ArrowLeft, Plus } from 'lucide-react';
 import Link from 'next/link';
+import type { JSX } from 'react';
 
 import { GeneralExpensesBoard } from '../../../../components/features/general-expenses-board';
 import { Button } from '../../../../components/ui/button';

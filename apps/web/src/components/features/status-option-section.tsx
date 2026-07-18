@@ -1,7 +1,7 @@
 'use client';
 
 import { Plus, Pencil, Trash2, Check, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type JSX } from 'react';
 
 import type { StatusColor } from '../../lib/status-colors';
 import { STATUS_COLORS, DEFAULT_STATUS_COLOR, statusColorMeta } from '../../lib/status-colors';

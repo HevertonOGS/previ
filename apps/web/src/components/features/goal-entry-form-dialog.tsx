@@ -2,7 +2,7 @@
 
 import { Plus, Pencil } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, type JSX } from 'react';
 
 import type { GoalEntry } from '../../lib/types';
 import { goalsService } from '../../services/goals.service';

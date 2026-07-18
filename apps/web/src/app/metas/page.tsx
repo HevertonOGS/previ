@@ -1,5 +1,6 @@
 import { Plus, Target, Pencil, Wallet } from 'lucide-react';
 import Link from 'next/link';
+import type { JSX } from 'react';
 
 import { DeleteItemButton } from '../../components/features/delete-item-button';
 import { Badge } from '../../components/ui/badge';

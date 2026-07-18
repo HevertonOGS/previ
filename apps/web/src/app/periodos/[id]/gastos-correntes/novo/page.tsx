@@ -3,7 +3,7 @@
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type JSX } from 'react';
 
 import { Button } from '../../../../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../../../components/ui/card';

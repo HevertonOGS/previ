@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import { Badge } from '../../../components/ui/badge';
 import { periodsService } from '../../../services/periods.service';
 
