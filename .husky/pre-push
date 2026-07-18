@@ -1,0 +1,1 @@
+npx nx affected -t lint test --exclude=api-e2e,web-e2e
