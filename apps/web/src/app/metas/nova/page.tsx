@@ -1,18 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { goalsService } from '../../../services/goals.service';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import { Button } from '../../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Select } from '../../../components/ui/select';
 import { Textarea } from '../../../components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import { goalsService } from '../../../services/goals.service';
 
-export default function NewGoalPage() {
+export default function NewGoalPage(): JSX.Element {
   const router = useRouter();
 
   const [form, setForm] = useState({
@@ -24,11 +25,11 @@ export default function NewGoalPage() {
   });
   const [loading, setLoading] = useState(false);
 
-  function set(field: string, value: string) {
+  function set(field: string, value: string): void {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent): Promise<void> {
     e.preventDefault();
     setLoading(true);
     try {

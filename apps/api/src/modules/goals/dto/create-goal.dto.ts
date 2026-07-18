@@ -12,26 +12,26 @@ export class CreateGoalDto {
   @ApiProperty({ example: 'Emergency Fund' })
   @IsString()
   @IsNotEmpty()
-  name!: string;
+  public name!: string;
 
   @ApiProperty({ example: 10000 })
   @Type(() => Number)
   @IsNumber()
   @Min(0)
-  targetAmount!: number;
+  public targetAmount!: number;
 
   @ApiPropertyOptional({ example: '2026-12-31T00:00:00.000Z' })
   @IsString()
   @IsOptional()
-  targetDate?: string;
+  public targetDate?: string;
 
   @ApiPropertyOptional({ enum: GoalStatusDto, default: GoalStatusDto.ACTIVE })
   @IsEnum(GoalStatusDto)
   @IsOptional()
-  status?: GoalStatusDto;
+  public status?: GoalStatusDto;
 
   @ApiPropertyOptional({ example: 'Build 6 months of expenses' })
   @IsString()
   @IsOptional()
-  notes?: string;
+  public notes?: string;
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useToast } from '../../hooks/use-toast';
+
 import {
   Toast,
   ToastClose,
@@ -10,7 +11,7 @@ import {
   ToastViewport,
 } from './toast';
 
-export function Toaster() {
+export function Toaster(): JSX.Element {
   const { toasts, dismiss } = useToast();
 
   return (

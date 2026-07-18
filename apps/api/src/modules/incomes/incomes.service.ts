@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { Income } from '@prisma/client';
+
 import { PrismaService } from '../../prisma/prisma.service';
+
 import { CreateIncomeDto, UpdateIncomeDto } from './dto';
 
 @Injectable()
 export class IncomesService {
   public constructor(private readonly prisma: PrismaService) {}
 
-  public create(dto: CreateIncomeDto) {
+  public create(dto: CreateIncomeDto): Promise<Income> {
     return this.prisma.income.create({
       data: {
         ...dto,
@@ -16,18 +19,18 @@ export class IncomesService {
     });
   }
 
-  public findAll(periodId?: string) {
+  public findAll(periodId?: string): Promise<Income[]> {
     return this.prisma.income.findMany({
       where: periodId ? { periodId } : undefined,
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  public findOne(id: string) {
+  public findOne(id: string): Promise<Income | null> {
     return this.prisma.income.findUnique({ where: { id } });
   }
 
-  public update(id: string, dto: UpdateIncomeDto) {
+  public update(id: string, dto: UpdateIncomeDto): Promise<Income> {
     return this.prisma.income.update({
       where: { id },
       data: {
@@ -38,7 +41,7 @@ export class IncomesService {
     });
   }
 
-  public remove(id: string) {
+  public remove(id: string): Promise<Income> {
     return this.prisma.income.delete({ where: { id } });
   }
 }

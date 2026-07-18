@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { GeneralExpensesController } from './general-expenses.controller';
 import { GeneralExpensesService } from './general-expenses.service';
 
@@ -47,7 +48,7 @@ describe('GeneralExpensesController', () => {
 
   it('should update', async () => {
     mockService.update.mockResolvedValue({ ...mockExpense, status: 'PAID' });
-    const result = await controller.update('ge-1', { status: 'PAID' as any });
+    const result = await controller.update('ge-1', { status: 'PAID' });
     expect(result.status).toBe('PAID');
   });
 

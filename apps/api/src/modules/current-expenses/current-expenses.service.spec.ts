@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CurrentExpensesService } from './current-expenses.service';
+
 import { PrismaService } from '../../prisma/prisma.service';
+
+import { CurrentExpensesService } from './current-expenses.service';
 
 describe('CurrentExpensesService', () => {
   let service: CurrentExpensesService;
@@ -36,7 +38,7 @@ describe('CurrentExpensesService', () => {
     mockPrisma.currentExpense.create.mockResolvedValue(mockExpense);
     const result = await service.create({
       periodId: 'p-1', expenseTypeId: 'type-1', categoryId: 'cat-1',
-      name: 'Groceries', amount: 150, paidAt: '2026-07-05', paymentMethod: 'DEBIT' as any,
+      name: 'Groceries', amount: 150, paidAt: '2026-07-05', paymentMethod: 'DEBIT',
     });
     expect(result).toEqual(mockExpense);
   });

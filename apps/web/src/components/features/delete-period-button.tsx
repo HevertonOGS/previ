@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import { periodsService } from '../../services/periods.service';
 import { Button } from '../ui/button';
 import {
@@ -21,12 +22,12 @@ interface DeletePeriodButtonProps {
   periodLabel: string;
 }
 
-export function DeletePeriodButton({ periodId, periodLabel }: DeletePeriodButtonProps) {
+export function DeletePeriodButton({ periodId, periodLabel }: DeletePeriodButtonProps): JSX.Element {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
-  async function handleDelete() {
+  async function handleDelete(): Promise<void> {
     setLoading(true);
     try {
       await periodsService.delete(periodId);

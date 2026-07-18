@@ -1,20 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { generalExpensesService } from '../../../../../services/general-expenses.service';
-import { referenceService, type StatusOption, type PaymentMethodOption } from '../../../../../services/reference.service';
-import type { Category, ExpenseType } from '../../../../../lib/types';
+import Link from 'next/link';
+import { useRouter, useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
 import { Button } from '../../../../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../../components/ui/card';
 import { Input } from '../../../../../components/ui/input';
 import { Label } from '../../../../../components/ui/label';
 import { Select } from '../../../../../components/ui/select';
 import { Textarea } from '../../../../../components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../../components/ui/card';
+import type { Category, ExpenseType } from '../../../../../lib/types';
+import { generalExpensesService } from '../../../../../services/general-expenses.service';
+import { referenceService, type StatusOption, type PaymentMethodOption } from '../../../../../services/reference.service';
 
-export default function NewGeneralExpensePage() {
+export default function NewGeneralExpensePage(): JSX.Element {
   const router = useRouter();
   const { id: periodId } = useParams<{ id: string }>();
 
@@ -61,11 +62,11 @@ export default function NewGeneralExpensePage() {
     }).catch(() => undefined);
   }, []);
 
-  function set(field: string, value: string) {
+  function set(field: string, value: string): void {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     setLoading(true);
     try {

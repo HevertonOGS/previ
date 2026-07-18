@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { Sidebar } from '../components/layout/sidebar';
+
 import { MobileNav } from '../components/layout/mobile-nav';
+import { Sidebar } from '../components/layout/sidebar';
 import { Toaster } from '../components/ui/toaster';
 import './global.css';
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
   description: 'Personal finance management',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }): JSX.Element {
   return (
     <html lang="en">
       <body className={inter.className}>

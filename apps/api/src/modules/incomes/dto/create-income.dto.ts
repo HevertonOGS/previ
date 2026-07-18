@@ -5,53 +5,53 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-v
 export class CreateIncomeDto {
   @ApiProperty({ example: 'uuid' })
   @IsUUID()
-  periodId!: string;
+  public periodId!: string;
 
   @ApiProperty({ example: 'Salary' })
   @IsString()
   @IsNotEmpty()
-  name!: string;
+  public name!: string;
 
   @ApiProperty({ example: 'Employment' })
   @IsString()
   @IsNotEmpty()
-  category!: string;
+  public category!: string;
 
   @ApiPropertyOptional({ example: 'Nubank' })
   @IsString()
   @IsOptional()
-  source?: string;
+  public source?: string;
 
   @ApiProperty({ example: 5000 })
   @Type(() => Number)
   @IsNumber()
   @Min(0)
-  expectedAmount!: number;
+  public expectedAmount!: number;
 
   @ApiPropertyOptional({ example: 5000 })
   @Type(() => Number)
   @IsNumber()
   @Min(0)
   @IsOptional()
-  actualAmount?: number;
+  public actualAmount?: number;
 
   @ApiPropertyOptional({ example: '2026-07-05' })
   @IsString()
   @IsOptional()
-  expectedReceiptAt?: string;
+  public expectedReceiptAt?: string;
 
   @ApiPropertyOptional({ example: '2026-07-05' })
   @IsString()
   @IsOptional()
-  receivedAt?: string;
+  public receivedAt?: string;
 
   @ApiPropertyOptional({ example: 'Pendente' })
   @IsString()
   @IsOptional()
-  status?: string;
+  public status?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  notes?: string;
+  public notes?: string;
 }

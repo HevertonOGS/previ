@@ -1,12 +1,13 @@
-import Link from 'next/link';
 import { Plus, Target, Pencil, Wallet } from 'lucide-react';
-import { goalsService } from '../../services/goals.service';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import Link from 'next/link';
+
+import { DeleteItemButton } from '../../components/features/delete-item-button';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import { DeleteItemButton } from '../../components/features/delete-item-button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { goalsService } from '../../services/goals.service';
 
-function formatCurrency(value: string | number) {
+function formatCurrency(value: string | number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value));
 }
 
@@ -22,7 +23,7 @@ const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'success' | 'war
   PAUSED: 'warning',
 };
 
-export default async function GoalsPage() {
+export default async function GoalsPage(): Promise<JSX.Element> {
   let goals: Awaited<ReturnType<typeof goalsService.list>> = [];
 
   try {

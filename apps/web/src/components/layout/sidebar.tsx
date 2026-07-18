@@ -1,7 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   CalendarDays,
@@ -9,6 +7,9 @@ import {
   Upload,
   Settings,
 } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 import { cn } from '../../lib/utils';
 
 export const navItems = [
@@ -19,7 +20,7 @@ export const navItems = [
   { href: '/configuracoes', label: 'Configurações', icon: Settings },
 ];
 
-export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
+export function SidebarNav({ onNavigate }: { onNavigate?: () => void }): JSX.Element {
   const pathname = usePathname();
 
   return (
@@ -47,7 +48,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-export function Sidebar() {
+export function Sidebar(): JSX.Element {
   return (
     <aside className="hidden h-screen w-60 flex-col bg-sidebar text-sidebar-foreground md:flex">
       <div className="flex h-16 items-center border-b border-sidebar-border px-6">

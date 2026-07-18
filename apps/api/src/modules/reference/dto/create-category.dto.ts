@@ -11,10 +11,10 @@ export class CreateCategoryDto {
   @ApiProperty({ example: 'Housing' })
   @IsString()
   @IsNotEmpty()
-  name!: string;
+  public name!: string;
 
   @ApiPropertyOptional({ enum: CategoryKindDto, default: CategoryKindDto.EXPENSE })
   @IsEnum(CategoryKindDto)
   @IsOptional()
-  kind?: CategoryKindDto;
+  public kind?: CategoryKindDto;
 }

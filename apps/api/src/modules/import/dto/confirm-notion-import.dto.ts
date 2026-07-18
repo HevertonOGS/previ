@@ -14,71 +14,71 @@ import {
 } from 'class-validator';
 
 export class NotionIncomeRowDto {
-  @ApiProperty() @IsString() tempId!: string;
-  @ApiProperty() @IsString() name!: string;
-  @ApiProperty() @IsString() category!: string;
-  @ApiProperty() @IsNumber() @Min(0) expectedAmount!: number;
-  @ApiPropertyOptional() @IsNumber() @IsOptional() actualAmount?: number | null;
-  @ApiPropertyOptional() @IsDateString() @IsOptional() expectedReceiptAt?: string | null;
-  @ApiPropertyOptional() @IsDateString() @IsOptional() receivedAt?: string | null;
-  @ApiProperty() @IsEnum(['PENDING', 'RECEIVED']) status!: string;
+  @ApiProperty() @IsString() public tempId!: string;
+  @ApiProperty() @IsString() public name!: string;
+  @ApiProperty() @IsString() public category!: string;
+  @ApiProperty() @IsNumber() @Min(0) public expectedAmount!: number;
+  @ApiPropertyOptional() @IsNumber() @IsOptional() public actualAmount?: number | null;
+  @ApiPropertyOptional() @IsDateString() @IsOptional() public expectedReceiptAt?: string | null;
+  @ApiPropertyOptional() @IsDateString() @IsOptional() public receivedAt?: string | null;
+  @ApiProperty() @IsEnum(['PENDING', 'RECEIVED']) public status!: string;
 }
 
 export class ConfirmNotionIncomesDto {
-  @ApiProperty() @IsUUID() periodId!: string;
+  @ApiProperty() @IsUUID() public periodId!: string;
   @ApiProperty({ type: [NotionIncomeRowDto] })
   @IsArray() @ValidateNested({ each: true }) @Type(() => NotionIncomeRowDto)
-  rows!: NotionIncomeRowDto[];
+  public rows!: NotionIncomeRowDto[];
 }
 
 export class NotionGeneralExpenseRowDto {
-  @ApiProperty() @IsString() tempId!: string;
-  @ApiProperty() @IsString() name!: string;
-  @ApiProperty() @IsString() expenseTypeName!: string;
-  @ApiProperty() @IsString() categoryName!: string;
-  @ApiProperty() @IsNumber() @Min(0) estimatedAmount!: number;
-  @ApiPropertyOptional() @IsNumber() @IsOptional() actualAmount?: number | null;
-  @ApiPropertyOptional() @IsDateString() @IsOptional() expectedPayAt?: string | null;
-  @ApiPropertyOptional() @IsDateString() @IsOptional() paidAt?: string | null;
-  @ApiProperty() @IsEnum(['ESTIMATED', 'PENDING', 'PAID']) status!: string;
-  @ApiPropertyOptional() @IsString() @IsOptional() paymentMethodRaw?: string | null;
+  @ApiProperty() @IsString() public tempId!: string;
+  @ApiProperty() @IsString() public name!: string;
+  @ApiProperty() @IsString() public expenseTypeName!: string;
+  @ApiProperty() @IsString() public categoryName!: string;
+  @ApiProperty() @IsNumber() @Min(0) public estimatedAmount!: number;
+  @ApiPropertyOptional() @IsNumber() @IsOptional() public actualAmount?: number | null;
+  @ApiPropertyOptional() @IsDateString() @IsOptional() public expectedPayAt?: string | null;
+  @ApiPropertyOptional() @IsDateString() @IsOptional() public paidAt?: string | null;
+  @ApiProperty() @IsEnum(['ESTIMATED', 'PENDING', 'PAID']) public status!: string;
+  @ApiPropertyOptional() @IsString() @IsOptional() public paymentMethodRaw?: string | null;
 }
 
 export class ConfirmNotionGeneralExpensesDto {
-  @ApiProperty() @IsUUID() periodId!: string;
+  @ApiProperty() @IsUUID() public periodId!: string;
   @ApiProperty({ type: [NotionGeneralExpenseRowDto] })
   @IsArray() @ValidateNested({ each: true }) @Type(() => NotionGeneralExpenseRowDto)
-  rows!: NotionGeneralExpenseRowDto[];
+  public rows!: NotionGeneralExpenseRowDto[];
 }
 
 export class NotionCurrentExpenseRowDto {
-  @ApiProperty() @IsString() tempId!: string;
-  @ApiProperty() @IsString() name!: string;
-  @ApiProperty() @IsString() expenseTypeName!: string;
-  @ApiProperty() @IsString() categoryName!: string;
-  @ApiProperty() @IsNumber() @Min(0) amount!: number;
-  @ApiProperty() @IsDateString() paidAt!: string;
-  @ApiProperty() @IsString() paymentMethodRaw!: string;
+  @ApiProperty() @IsString() public tempId!: string;
+  @ApiProperty() @IsString() public name!: string;
+  @ApiProperty() @IsString() public expenseTypeName!: string;
+  @ApiProperty() @IsString() public categoryName!: string;
+  @ApiProperty() @IsNumber() @Min(0) public amount!: number;
+  @ApiProperty() @IsDateString() public paidAt!: string;
+  @ApiProperty() @IsString() public paymentMethodRaw!: string;
 }
 
 export class ConfirmNotionCurrentExpensesDto {
-  @ApiProperty() @IsUUID() periodId!: string;
+  @ApiProperty() @IsUUID() public periodId!: string;
   @ApiProperty({ type: [NotionCurrentExpenseRowDto] })
   @IsArray() @ValidateNested({ each: true }) @Type(() => NotionCurrentExpenseRowDto)
-  rows!: NotionCurrentExpenseRowDto[];
+  public rows!: NotionCurrentExpenseRowDto[];
 }
 
 export class NotionGoalEntryRowDto {
-  @ApiProperty() @IsString() tempId!: string;
-  @ApiProperty() @IsInt() year!: number;
-  @ApiProperty() @IsInt() @Min(1) month!: number;
-  @ApiProperty() @IsNumber() @Min(0) plannedAmount!: number;
-  @ApiPropertyOptional() @IsNumber() @IsOptional() actualAmount?: number | null;
+  @ApiProperty() @IsString() public tempId!: string;
+  @ApiProperty() @IsInt() public year!: number;
+  @ApiProperty() @IsInt() @Min(1) public month!: number;
+  @ApiProperty() @IsNumber() @Min(0) public plannedAmount!: number;
+  @ApiPropertyOptional() @IsNumber() @IsOptional() public actualAmount?: number | null;
 }
 
 export class ConfirmNotionGoalsDto {
-  @ApiProperty() @IsUUID() goalId!: string;
+  @ApiProperty() @IsUUID() public goalId!: string;
   @ApiProperty({ type: [NotionGoalEntryRowDto] })
   @IsArray() @ValidateNested({ each: true }) @Type(() => NotionGoalEntryRowDto)
-  rows!: NotionGoalEntryRowDto[];
+  public rows!: NotionGoalEntryRowDto[];
 }

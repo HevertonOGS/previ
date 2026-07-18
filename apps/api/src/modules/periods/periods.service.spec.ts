@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PeriodsService } from './periods.service';
+
 import { PrismaService } from '../../prisma/prisma.service';
+
+import { PeriodsService } from './periods.service';
 
 describe('PeriodsService', () => {
   let service: PeriodsService;

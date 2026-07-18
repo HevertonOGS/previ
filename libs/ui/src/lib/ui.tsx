@@ -1,6 +1,6 @@
 import styles from './ui.module.css';
 
-export function Ui() {
+export function Ui(): JSX.Element {
   return (
     <div className={styles['container']}>
       <h1>Welcome to Ui!</h1>

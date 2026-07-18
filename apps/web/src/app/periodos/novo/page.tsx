@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { periodsService } from '../../../services/periods.service';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import { Button } from '../../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Label } from '../../../components/ui/label';
 import { Select } from '../../../components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import { periodsService } from '../../../services/periods.service';
 
 const MONTHS = [
   { value: 1, label: 'Janeiro' },
@@ -28,7 +29,7 @@ const MONTHS = [
 const currentYear = new Date().getFullYear();
 const YEARS = Array.from({ length: 5 }, (_, i) => currentYear - 1 + i);
 
-export default function NewPeriodPage() {
+export default function NewPeriodPage(): JSX.Element {
   const router = useRouter();
   const now = new Date();
 
@@ -36,7 +37,7 @@ export default function NewPeriodPage() {
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent): Promise<void> {
     e.preventDefault();
     setLoading(true);
     try {

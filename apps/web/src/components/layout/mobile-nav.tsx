@@ -1,13 +1,15 @@
 'use client';
 
-import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Menu, X } from 'lucide-react';
-import { Button } from '../ui/button';
-import { SidebarNav } from './sidebar';
-import { cn } from '../../lib/utils';
+import * as React from 'react';
 
-export function MobileNav() {
+import { cn } from '../../lib/utils';
+import { Button } from '../ui/button';
+
+import { SidebarNav } from './sidebar';
+
+export function MobileNav(): JSX.Element {
   const [open, setOpen] = React.useState(false);
 
   return (

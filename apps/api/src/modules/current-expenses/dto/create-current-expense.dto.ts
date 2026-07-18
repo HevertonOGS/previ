@@ -5,42 +5,42 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-v
 export class CreateCurrentExpenseDto {
   @ApiProperty()
   @IsUUID()
-  periodId!: string;
+  public periodId!: string;
 
   @ApiProperty()
   @IsUUID()
-  expenseTypeId!: string;
+  public expenseTypeId!: string;
 
   @ApiProperty()
   @IsUUID()
-  categoryId!: string;
+  public categoryId!: string;
 
   @ApiProperty({ example: 'Grocery shopping' })
   @IsString()
   @IsNotEmpty()
-  name!: string;
+  public name!: string;
 
   @ApiPropertyOptional({ example: 'Nubank' })
   @IsString()
   @IsOptional()
-  source?: string;
+  public source?: string;
 
   @ApiProperty({ example: 150.5 })
   @Type(() => Number)
   @IsNumber()
   @Min(0)
-  amount!: number;
+  public amount!: number;
 
   @ApiProperty({ example: '2026-07-05T00:00:00.000Z' })
   @IsString()
-  paidAt!: string;
+  public paidAt!: string;
 
   @ApiProperty({ example: 'PIX' })
   @IsString()
-  paymentMethod!: string;
+  public paymentMethod!: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  notes?: string;
+  public notes?: string;
 }

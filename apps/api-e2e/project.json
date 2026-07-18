@@ -5,6 +5,7 @@
     "api"
   ],
   "projectType": "application",
+  "tags": ["scope:api-e2e"],
   "targets": {
     "e2e": {
       "executor": "@nx/jest:jest",

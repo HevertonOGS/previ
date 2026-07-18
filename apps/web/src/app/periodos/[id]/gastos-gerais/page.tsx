@@ -1,13 +1,14 @@
-import Link from 'next/link';
 import { ArrowLeft, Plus } from 'lucide-react';
+import Link from 'next/link';
+
+import { GeneralExpensesBoard } from '../../../../components/features/general-expenses-board';
+import { Button } from '../../../../components/ui/button';
 import { generalExpensesService } from '../../../../services/general-expenses.service';
 import { referenceService } from '../../../../services/reference.service';
-import { Button } from '../../../../components/ui/button';
-import { GeneralExpensesBoard } from '../../../../components/features/general-expenses-board';
 
 type Props = { params: Promise<{ id: string }> };
 
-export default async function GeneralExpensesPage({ params }: Props) {
+export default async function GeneralExpensesPage({ params }: Props): Promise<JSX.Element> {
   const { id } = await params;
   let expenses: Awaited<ReturnType<typeof generalExpensesService.list>> = [];
   let statusOptions: Awaited<ReturnType<typeof referenceService.expenseStatusOptions>> = [];

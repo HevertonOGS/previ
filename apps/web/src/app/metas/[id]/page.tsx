@@ -1,19 +1,20 @@
+import { ArrowLeft, Target } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Target } from 'lucide-react';
-import { goalsService } from '../../../services/goals.service';
-import { Card, CardContent } from '../../../components/ui/card';
+
+import { DeleteItemButton } from '../../../components/features/delete-item-button';
+import { GoalEntryFormDialog } from '../../../components/features/goal-entry-form-dialog';
 import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/button';
-import { GoalEntryFormDialog } from '../../../components/features/goal-entry-form-dialog';
-import { DeleteItemButton } from '../../../components/features/delete-item-button';
+import { Card, CardContent } from '../../../components/ui/card';
+import { goalsService } from '../../../services/goals.service';
 
 const MONTH_LABELS = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
 ];
 
-function formatCurrency(value: string | number) {
+function formatCurrency(value: string | number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value));
 }
 
@@ -31,7 +32,7 @@ const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'success' | 'war
 
 type Props = { params: Promise<{ id: string }> };
 
-export default async function GoalDetailPage({ params }: Props) {
+export default async function GoalDetailPage({ params }: Props): Promise<JSX.Element> {
   const { id } = await params;
   const goal = await goalsService.get(id).catch(() => notFound());
   if (!goal) notFound();

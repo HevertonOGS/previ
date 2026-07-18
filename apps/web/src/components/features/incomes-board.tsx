@@ -1,17 +1,19 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import Link from 'next/link';
 import { Pencil } from 'lucide-react';
+import Link from 'next/link';
+import { useMemo, useState } from 'react';
+
+import { statusColorMeta } from '../../lib/status-colors';
 import type { Income } from '../../lib/types';
 import type { StatusOptionWithColor } from '../../services/reference.service';
-import { statusColorMeta } from '../../lib/status-colors';
-import { Card, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import { Card, CardContent } from '../ui/card';
+
 import { DeleteItemButton } from './delete-item-button';
 
-function formatCurrency(value: string | number) {
+function formatCurrency(value: string | number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value));
 }
 
@@ -26,7 +28,11 @@ interface IncomesBoardProps {
   statusOptions: StatusOptionWithColor[];
 }
 
-export function IncomesBoard({ periodId, incomes, statusOptions }: IncomesBoardProps) {
+export function IncomesBoard({
+  periodId,
+  incomes,
+  statusOptions,
+}: IncomesBoardProps): JSX.Element {
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
   const colorByStatus = useMemo(() => {

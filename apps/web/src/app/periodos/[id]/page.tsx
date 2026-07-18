@@ -1,29 +1,32 @@
+import { ArrowLeft, TrendingUp, Receipt, ShoppingCart, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, TrendingUp, Receipt, ShoppingCart, BarChart3 } from 'lucide-react';
+
 import { DeletePeriodButton } from '../../../components/features/delete-period-button';
-import { periodsService } from '../../../services/periods.service';
-import { incomesService } from '../../../services/incomes.service';
-import { generalExpensesService } from '../../../services/general-expenses.service';
-import { currentExpensesService } from '../../../services/current-expenses.service';
-import { weeklyBalancesService } from '../../../services/weekly-balances.service';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import { currentExpensesService } from '../../../services/current-expenses.service';
+import { generalExpensesService } from '../../../services/general-expenses.service';
+import { incomesService } from '../../../services/incomes.service';
+import { periodsService } from '../../../services/periods.service';
+import { weeklyBalancesService } from '../../../services/weekly-balances.service';
 
 const MONTH_NAMES = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
 ];
 
-function formatCurrency(value: string | number) {
+function formatCurrency(value: string | number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   }).format(Number(value));
 }
 
-function sumAmounts(items: { expectedAmount?: string; actualAmount?: string | null; amount?: string; estimatedAmount?: string }[]) {
+function sumAmounts(
+  items: { expectedAmount?: string; actualAmount?: string | null; amount?: string; estimatedAmount?: string }[],
+): number {
   return items.reduce((acc, item) => {
     const value = Number(item.actualAmount ?? item.amount ?? item.expectedAmount ?? item.estimatedAmount ?? 0);
     return acc + value;
@@ -32,7 +35,7 @@ function sumAmounts(items: { expectedAmount?: string; actualAmount?: string | nu
 
 type Props = { params: Promise<{ id: string }> };
 
-export default async function PeriodDetailPage({ params }: Props) {
+export default async function PeriodDetailPage({ params }: Props): Promise<JSX.Element> {
   const { id } = await params;
 
   const period = await periodsService.get(id).catch(() => notFound());

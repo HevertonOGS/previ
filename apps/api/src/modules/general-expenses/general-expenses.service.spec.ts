@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GeneralExpensesService } from './general-expenses.service';
+
 import { PrismaService } from '../../prisma/prisma.service';
+
+import { GeneralExpensesService } from './general-expenses.service';
 
 describe('GeneralExpensesService', () => {
   let service: GeneralExpensesService;
@@ -64,7 +66,7 @@ describe('GeneralExpensesService', () => {
 
   it('should update a general expense', async () => {
     mockPrisma.generalExpense.update.mockResolvedValue({ ...mockExpense, status: 'PAID' });
-    const result = await service.update('ge-1', { status: 'PAID' as any });
+    const result = await service.update('ge-1', { status: 'PAID' });
     expect(result.status).toBe('PAID');
   });
 

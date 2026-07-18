@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { IncomesService } from './incomes.service';
+
 import { PrismaService } from '../../prisma/prisma.service';
+
+import { IncomesService } from './incomes.service';
 
 describe('IncomesService', () => {
   let service: IncomesService;
@@ -63,7 +65,7 @@ describe('IncomesService', () => {
 
   it('should update an income', async () => {
     mockPrisma.income.update.mockResolvedValue({ ...mockIncome, status: 'RECEIVED' });
-    const result = await service.update('inc-1', { status: 'RECEIVED' as any });
+    const result = await service.update('inc-1', { status: 'RECEIVED' });
     expect(result.status).toBe('RECEIVED');
   });
 

@@ -5,10 +5,10 @@ export class CreateExpenseTypeDto {
   @ApiProperty({ example: 'Fixed Costs' })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  public name: string;
 
   @ApiPropertyOptional({ example: 'Recurring monthly obligations' })
   @IsString()
   @IsOptional()
-  description?: string;
+  public description?: string;
 }

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import { apiClient } from '../../lib/http-client';
 import { Button } from '../ui/button';
 import {
@@ -21,12 +22,12 @@ interface DeleteItemButtonProps {
   label: string;
 }
 
-export function DeleteItemButton({ id, endpoint, label }: DeleteItemButtonProps) {
+export function DeleteItemButton({ id, endpoint, label }: DeleteItemButtonProps): JSX.Element {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  async function handleDelete() {
+  async function handleDelete(): Promise<void> {
     setLoading(true);
     try {
       await apiClient.delete(`${endpoint}/${id}`);

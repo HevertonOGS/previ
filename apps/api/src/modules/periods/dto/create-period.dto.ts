@@ -8,12 +8,12 @@ export class CreatePeriodDto {
   @IsInt()
   @Min(2020)
   @Max(2100)
-  year!: number;
+  public year!: number;
 
   @ApiProperty({ example: 7 })
   @Type(() => Number)
   @IsInt()
   @Min(1)
   @Max(12)
-  month!: number;
+  public month!: number;
 }

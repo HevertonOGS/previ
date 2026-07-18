@@ -1,12 +1,13 @@
-import Link from 'next/link';
 import { ArrowLeft, Plus } from 'lucide-react';
-import { currentExpensesService } from '../../../../services/current-expenses.service';
-import { Button } from '../../../../components/ui/button';
+import Link from 'next/link';
+
 import { CurrentExpensesBoard } from '../../../../components/features/current-expenses-board';
+import { Button } from '../../../../components/ui/button';
+import { currentExpensesService } from '../../../../services/current-expenses.service';
 
 type Props = { params: Promise<{ id: string }> };
 
-export default async function CurrentExpensesPage({ params }: Props) {
+export default async function CurrentExpensesPage({ params }: Props): Promise<JSX.Element> {
   const { id } = await params;
   let expenses: Awaited<ReturnType<typeof currentExpensesService.list>> = [];
 

@@ -5,5 +5,5 @@ export class UpdateBudgetDto {
   @ApiProperty({ example: 900 })
   @IsNumber()
   @Min(0)
-  budget: number;
+  public budget: number;
 }

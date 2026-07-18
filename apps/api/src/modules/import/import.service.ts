@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+
 import { PrismaService } from '../../prisma/prisma.service';
-import { parseOFX, type ParsedTransaction } from './parsers/ofx.parser';
-import { parseCSV } from './parsers/csv.parser';
+
 import type { ConfirmImportDto } from './dto';
+import { parseCSV } from './parsers/csv.parser';
+import { parseOFX, type ParsedTransaction } from './parsers/ofx.parser';
 
 export type StatementFileType = 'ofx' | 'csv';
 

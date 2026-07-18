@@ -9,8 +9,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { ImportService, type StatementFileType } from './import.service';
-import { NotionImportService, type NotionTableType } from './notion-import.service';
+
 import { ConfirmImportDto } from './dto';
 import {
   ConfirmNotionIncomesDto,
@@ -18,6 +17,15 @@ import {
   ConfirmNotionCurrentExpensesDto,
   ConfirmNotionGoalsDto,
 } from './dto/confirm-notion-import.dto';
+import { ImportService, type StatementFileType } from './import.service';
+import { NotionImportService, type NotionTableType } from './notion-import.service';
+import type {
+  ParsedNotionIncome,
+  ParsedNotionGeneralExpense,
+  ParsedNotionCurrentExpense,
+  ParsedNotionGoalEntry,
+} from './parsers/notion.parser';
+import type { ParsedTransaction } from './parsers/ofx.parser';
 
 const NOTION_TYPES: NotionTableType[] = ['incomes', 'general-expenses', 'current-expenses', 'goals'];
 
@@ -36,7 +44,9 @@ export class ImportController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({ schema: { type: 'object', properties: { file: { type: 'string', format: 'binary' } } } })
   @UseInterceptors(FileInterceptor('file'))
-  public parseStatement(@UploadedFile() file: Express.Multer.File) {
+  public parseStatement(@UploadedFile() file: Express.Multer.File): {
+    transactions: ParsedTransaction[];
+  } {
     if (!file) throw new BadRequestException('No file uploaded');
     const ext = file.originalname.split('.').pop()?.toLowerCase();
     const type: StatementFileType = ext === 'ofx' ? 'ofx' : 'csv';
@@ -45,7 +55,7 @@ export class ImportController {
 
   @Post('statement/confirm')
   @ApiOperation({ summary: 'Save confirmed bank transactions as current expenses' })
-  public async confirmStatement(@Body() dto: ConfirmImportDto) {
+  public async confirmStatement(@Body() dto: ConfirmImportDto): Promise<{ created: number }> {
     return this.service.confirmImport(dto);
   }
 
@@ -60,7 +70,13 @@ export class ImportController {
   public parseNotion(
     @UploadedFile() file: Express.Multer.File,
     @Query('type') type: NotionTableType,
-  ) {
+  ): {
+    rows:
+      | ParsedNotionIncome[]
+      | ParsedNotionGeneralExpense[]
+      | ParsedNotionCurrentExpense[]
+      | ParsedNotionGoalEntry[];
+  } {
     if (!file) throw new BadRequestException('No file uploaded');
     if (!NOTION_TYPES.includes(type)) throw new BadRequestException('Invalid table type');
     return { rows: this.notionService.parseFile(file.buffer, type) };
@@ -68,25 +84,33 @@ export class ImportController {
 
   @Post('notion/incomes/confirm')
   @ApiOperation({ summary: 'Save confirmed Notion incomes' })
-  public async confirmNotionIncomes(@Body() dto: ConfirmNotionIncomesDto) {
+  public async confirmNotionIncomes(
+    @Body() dto: ConfirmNotionIncomesDto,
+  ): Promise<{ created: number }> {
     return this.notionService.confirmIncomes(dto);
   }
 
   @Post('notion/general-expenses/confirm')
   @ApiOperation({ summary: 'Save confirmed Notion general expenses' })
-  public async confirmNotionGeneralExpenses(@Body() dto: ConfirmNotionGeneralExpensesDto) {
+  public async confirmNotionGeneralExpenses(
+    @Body() dto: ConfirmNotionGeneralExpensesDto,
+  ): Promise<{ created: number }> {
     return this.notionService.confirmGeneralExpenses(dto);
   }
 
   @Post('notion/current-expenses/confirm')
   @ApiOperation({ summary: 'Save confirmed Notion current expenses' })
-  public async confirmNotionCurrentExpenses(@Body() dto: ConfirmNotionCurrentExpensesDto) {
+  public async confirmNotionCurrentExpenses(
+    @Body() dto: ConfirmNotionCurrentExpensesDto,
+  ): Promise<{ created: number }> {
     return this.notionService.confirmCurrentExpenses(dto);
   }
 
   @Post('notion/goals/confirm')
   @ApiOperation({ summary: 'Save confirmed Notion goal entries' })
-  public async confirmNotionGoals(@Body() dto: ConfirmNotionGoalsDto) {
+  public async confirmNotionGoals(
+    @Body() dto: ConfirmNotionGoalsDto,
+  ): Promise<{ created: number }> {
     return this.notionService.confirmGoals(dto);
   }
 }

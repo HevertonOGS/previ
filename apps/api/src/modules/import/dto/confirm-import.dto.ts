@@ -15,47 +15,47 @@ import {
 export class ParsedTransactionDto {
   @ApiProperty()
   @IsString()
-  tempId!: string;
+  public tempId!: string;
 
   @ApiProperty()
   @IsDateString()
-  date!: string;
+  public date!: string;
 
   @ApiProperty()
   @IsString()
-  description!: string;
+  public description!: string;
 
   @ApiProperty()
   @IsNumber()
   @Min(0)
-  amount!: number;
+  public amount!: number;
 }
 
 export class ConfirmImportDto {
   @ApiProperty()
   @IsUUID()
-  periodId!: string;
+  public periodId!: string;
 
   @ApiProperty()
   @IsUUID()
-  expenseTypeId!: string;
+  public expenseTypeId!: string;
 
   @ApiProperty()
   @IsUUID()
-  categoryId!: string;
+  public categoryId!: string;
 
   @ApiProperty({ example: 'DEBIT' })
   @IsEnum(['DEBIT', 'CREDIT', 'PIX', 'CASH', 'BENEFITS', 'OTHER'])
-  paymentMethod!: string;
+  public paymentMethod!: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  notes?: string;
+  public notes?: string;
 
   @ApiProperty({ type: [ParsedTransactionDto] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ParsedTransactionDto)
-  transactions!: ParsedTransactionDto[];
+  public transactions!: ParsedTransactionDto[];
 }

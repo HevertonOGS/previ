@@ -1,14 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import { Plus, Pencil, Trash2, Check, X } from 'lucide-react';
+import { useState } from 'react';
+
 import type { StatusColor } from '../../lib/status-colors';
 import { STATUS_COLORS, DEFAULT_STATUS_COLOR, statusColorMeta } from '../../lib/status-colors';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Separator } from '../ui/separator';
 import {
   Dialog,
   DialogContent,
@@ -18,13 +16,16 @@ import {
   DialogDescription,
   DialogClose,
 } from '../ui/dialog';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Separator } from '../ui/separator';
 
 interface ColorPickerProps {
   value: StatusColor;
   onChange: (color: StatusColor) => void;
 }
 
-function ColorPicker({ value, onChange }: ColorPickerProps) {
+function ColorPicker({ value, onChange }: ColorPickerProps): JSX.Element {
   return (
     <div className="flex flex-wrap gap-2">
       {STATUS_COLORS.map((color) => {
@@ -68,14 +69,14 @@ function StatusOptionRow({
   option: StatusOptionItem;
   onUpdate: (id: string, name: string, color: StatusColor) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
-}) {
+}): JSX.Element {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(option.name);
   const [color, setColor] = useState<StatusColor>(option.color);
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  async function handleSave() {
+  async function handleSave(): Promise<void> {
     if (!name.trim()) return;
     setSaving(true);
     try {
@@ -86,7 +87,7 @@ function StatusOptionRow({
     }
   }
 
-  async function handleDelete() {
+  async function handleDelete(): Promise<void> {
     setSaving(true);
     try { await onDelete(option.id); } finally {
       setSaving(false);
@@ -160,12 +161,17 @@ function StatusOptionRow({
   );
 }
 
-export function StatusOptionSection({ options, onCreate, onUpdate, onDelete }: StatusOptionSectionProps) {
+export function StatusOptionSection({
+  options,
+  onCreate,
+  onUpdate,
+  onDelete,
+}: StatusOptionSectionProps): JSX.Element {
   const [name, setName] = useState('');
   const [color, setColor] = useState<StatusColor>(DEFAULT_STATUS_COLOR);
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     if (!name.trim()) return;
     setLoading(true);

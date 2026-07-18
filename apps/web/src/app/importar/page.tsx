@@ -1,17 +1,18 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
 import { Upload, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Select } from '../../components/ui/select';
+import type { Period, Category, ExpenseType } from '../../lib/types';
 import { importService, type ParsedTransaction } from '../../services/import.service';
 import { periodsService } from '../../services/periods.service';
 import { referenceService } from '../../services/reference.service';
-import type { Period, Category, ExpenseType } from '../../lib/types';
-import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { Badge } from '../../components/ui/badge';
-import { Label } from '../../components/ui/label';
-import { Select } from '../../components/ui/select';
-import { Input } from '../../components/ui/input';
 
 const PAYMENT_METHODS = [
   { value: 'DEBIT', label: 'Débito' },
@@ -29,7 +30,7 @@ const MONTH_NAMES = [
 
 type Step = 'upload' | 'preview' | 'success';
 
-export default function ImportPage() {
+export default function ImportPage(): JSX.Element {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState<Step>('upload');
@@ -67,7 +68,7 @@ export default function ImportPage() {
     }).catch(() => undefined);
   }, []);
 
-  async function handleFile(file: File) {
+  async function handleFile(file: File): Promise<void> {
     setError('');
     setUploading(true);
     try {
@@ -83,18 +84,18 @@ export default function ImportPage() {
     }
   }
 
-  function handleDrop(e: React.DragEvent) {
+  function handleDrop(e: React.DragEvent): void {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
+    if (file) void handleFile(file);
   }
 
-  function removeRow(tempId: string) {
+  function removeRow(tempId: string): void {
     setRemovedIds((prev) => new Set([...prev, tempId]));
   }
 
-  function restoreRow(tempId: string) {
+  function restoreRow(tempId: string): void {
     setRemovedIds((prev) => {
       const next = new Set(prev);
       next.delete(tempId);
@@ -102,7 +103,7 @@ export default function ImportPage() {
     });
   }
 
-  function editRow(tempId: string, field: keyof ParsedTransaction, value: string | number) {
+  function editRow(tempId: string, field: keyof ParsedTransaction, value: string | number): void {
     setEditedRows((prev) => ({
       ...prev,
       [tempId]: { ...prev[tempId], [field]: value },
@@ -115,7 +116,7 @@ export default function ImportPage() {
 
   const activeTransactions = transactions.filter((t) => !removedIds.has(t.tempId));
 
-  async function handleConfirm() {
+  async function handleConfirm(): Promise<void> {
     if (!periodId || !expenseTypeId || !categoryId) {
       setError('Selecione período, tipo e categoria.');
       return;
@@ -304,7 +305,7 @@ export default function ImportPage() {
           type="file"
           accept=".ofx,.csv"
           className="hidden"
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+          onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f); }}
         />
       </div>
 

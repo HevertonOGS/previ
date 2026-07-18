@@ -1,17 +1,23 @@
 import { Injectable } from '@nestjs/common';
+
 import { PrismaService } from '../../prisma/prisma.service';
-import {
-  parseNotionIncomes,
-  parseNotionGeneralExpenses,
-  parseNotionCurrentExpenses,
-  parseNotionGoals,
-} from './parsers/notion.parser';
+
 import type {
   ConfirmNotionIncomesDto,
   ConfirmNotionGeneralExpensesDto,
   ConfirmNotionCurrentExpensesDto,
   ConfirmNotionGoalsDto,
 } from './dto/confirm-notion-import.dto';
+import {
+  parseNotionIncomes,
+  parseNotionGeneralExpenses,
+  parseNotionCurrentExpenses,
+  parseNotionGoals,
+  type ParsedNotionIncome,
+  type ParsedNotionGeneralExpense,
+  type ParsedNotionCurrentExpense,
+  type ParsedNotionGoalEntry,
+} from './parsers/notion.parser';
 
 export type NotionTableType = 'incomes' | 'general-expenses' | 'current-expenses' | 'goals';
 
@@ -33,7 +39,14 @@ const PAYMENT_METHOD_MAP: Record<string, string> = {
 export class NotionImportService {
   public constructor(private readonly prisma: PrismaService) {}
 
-  public parseFile(buffer: Buffer, type: NotionTableType) {
+  public parseFile(
+    buffer: Buffer,
+    type: NotionTableType,
+  ):
+    | ParsedNotionIncome[]
+    | ParsedNotionGeneralExpense[]
+    | ParsedNotionCurrentExpense[]
+    | ParsedNotionGoalEntry[] {
     const content = buffer.toString('utf-8');
     switch (type) {
       case 'incomes': return parseNotionIncomes(content);

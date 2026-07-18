@@ -1,13 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Check, X } from 'lucide-react';
-import { referenceService, type StatusOption, type StatusOptionWithColor, type PaymentMethodOption } from '../../services/reference.service';
-import type { Category, ExpenseType } from '../../lib/types';
+import { useState, useEffect } from 'react';
+
 import { StatusOptionSection } from '../../components/features/status-option-section';
 import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
 import {
   Dialog,
@@ -18,7 +15,11 @@ import {
   DialogDescription,
   DialogClose,
 } from '../../components/ui/dialog';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import { Separator } from '../../components/ui/separator';
+import type { Category, ExpenseType } from '../../lib/types';
+import { referenceService, type StatusOption, type StatusOptionWithColor, type PaymentMethodOption } from '../../services/reference.service';
 
 // ── List item with inline edit ────────────────────────────────────────
 
@@ -32,14 +33,22 @@ interface ListItemProps {
   onDelete: () => Promise<void>;
 }
 
-function ListItem({ label, sublabel, hasExtra, extraLabel, extraValue, onEdit, onDelete }: ListItemProps) {
+function ListItem({
+  label,
+  sublabel,
+  hasExtra,
+  extraLabel,
+  extraValue,
+  onEdit,
+  onDelete,
+}: ListItemProps): JSX.Element {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(label);
   const [extra, setExtra] = useState(extraValue ?? '');
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  async function handleSave() {
+  async function handleSave(): Promise<void> {
     if (!name.trim()) return;
     setSaving(true);
     try {
@@ -50,7 +59,7 @@ function ListItem({ label, sublabel, hasExtra, extraLabel, extraValue, onEdit, o
     }
   }
 
-  async function handleDelete() {
+  async function handleDelete(): Promise<void> {
     setSaving(true);
     try { await onDelete(); } finally {
       setSaving(false);
@@ -67,7 +76,7 @@ function ListItem({ label, sublabel, hasExtra, extraLabel, extraValue, onEdit, o
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoFocus
-            onKeyDown={(e) => { if (e.key === 'Enter' && !hasExtra) handleSave(); if (e.key === 'Escape') setEditing(false); }}
+            onKeyDown={(e) => { if (e.key === 'Enter' && !hasExtra) void handleSave(); if (e.key === 'Escape') setEditing(false); }}
           />
         </div>
         {hasExtra && (
@@ -76,7 +85,7 @@ function ListItem({ label, sublabel, hasExtra, extraLabel, extraValue, onEdit, o
             <Input
               value={extra}
               onChange={(e) => setExtra(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') setEditing(false); }}
+              onKeyDown={(e) => { if (e.key === 'Enter') void handleSave(); if (e.key === 'Escape') setEditing(false); }}
             />
           </div>
         )}
@@ -144,12 +153,19 @@ interface AddFormProps {
   onAdd: (name: string, extra?: string) => Promise<void>;
 }
 
-function AddForm({ nameLabel, namePlaceholder, hasExtra, extraLabel, extraPlaceholder, onAdd }: AddFormProps) {
+function AddForm({
+  nameLabel,
+  namePlaceholder,
+  hasExtra,
+  extraLabel,
+  extraPlaceholder,
+  onAdd,
+}: AddFormProps): JSX.Element {
   const [name, setName] = useState('');
   const [extra, setExtra] = useState('');
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     if (!name.trim()) return;
     setLoading(true);
@@ -192,7 +208,7 @@ function AddForm({ nameLabel, namePlaceholder, hasExtra, extraLabel, extraPlaceh
 
 // ── Page ─────────────────────────────────────────────────────────────
 
-export default function ConfiguracoesPage() {
+export default function ConfiguracoesPage(): JSX.Element {
   const [incomeCategories, setIncomeCategories] = useState<Category[]>([]);
   const [expenseCategories, setExpenseCategories] = useState<Category[]>([]);
   const [expenseTypes, setExpenseTypes] = useState<ExpenseType[]>([]);
@@ -201,7 +217,7 @@ export default function ConfiguracoesPage() {
   const [paymentMethodOptions, setPaymentMethodOptions] = useState<PaymentMethodOption[]>([]);
   const [sourceOptions, setSourceOptions] = useState<StatusOption[]>([]);
 
-  function loadData() {
+  function loadData(): void {
     referenceService.categories('INCOME').then(setIncomeCategories).catch(() => undefined);
     referenceService.categories('EXPENSE').then(setExpenseCategories).catch(() => undefined);
     referenceService.expenseTypes().then(setExpenseTypes).catch(() => undefined);
@@ -213,7 +229,7 @@ export default function ConfiguracoesPage() {
 
   useEffect(() => { loadData(); }, []);
 
-  function renderCategoryList(cats: Category[], kind: 'INCOME' | 'EXPENSE') {
+  function renderCategoryList(cats: Category[], kind: 'INCOME' | 'EXPENSE'): JSX.Element {
     return (
       <>
         {cats.length === 0 ? (

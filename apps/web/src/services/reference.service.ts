@@ -1,6 +1,7 @@
+import type { StatusColor } from 'shared-types';
+
 import { apiClient } from '../lib/http-client';
 import type { Category, ExpenseType } from '../lib/types';
-import type { StatusColor } from 'shared-types';
 
 export type StatusOption = { id: string; name: string };
 export type StatusOptionWithColor = { id: string; name: string; color: StatusColor };

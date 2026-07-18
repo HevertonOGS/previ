@@ -1,34 +1,36 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { PeriodsService } from './periods.service';
+import { Period } from '@prisma/client';
+
 import { CreatePeriodDto } from './dto';
+import { PeriodsService, PeriodWithRelations } from './periods.service';
 
 @ApiTags('Periods')
 @Controller('periods')
 export class PeriodsController {
-  constructor(private readonly service: PeriodsService) {}
+  public constructor(private readonly service: PeriodsService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a monthly period' })
-  create(@Body() dto: CreatePeriodDto) {
+  public create(@Body() dto: CreatePeriodDto): Promise<Period> {
     return this.service.create(dto);
   }
 
   @Get()
   @ApiOperation({ summary: 'List all periods' })
-  findAll() {
+  public findAll(): Promise<Period[]> {
     return this.service.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a period with incomes and expenses' })
-  findOne(@Param('id') id: string) {
+  public findOne(@Param('id') id: string): Promise<PeriodWithRelations | null> {
     return this.service.findOne(id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a period' })
-  remove(@Param('id') id: string) {
+  public remove(@Param('id') id: string): Promise<Period> {
     return this.service.remove(id);
   }
 }

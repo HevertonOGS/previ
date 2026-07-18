@@ -48,19 +48,28 @@ export class NotionImportService {
     return data.rows;
   }
 
-  public confirmIncomes(periodId: string, rows: ParsedNotionIncome[]) {
+  public confirmIncomes(
+    periodId: string,
+    rows: ParsedNotionIncome[],
+  ): Promise<{ created: number }> {
     return apiClient.post<{ created: number }>('/import/notion/incomes/confirm', { periodId, rows });
   }
 
-  public confirmGeneralExpenses(periodId: string, rows: ParsedNotionGeneralExpense[]) {
+  public confirmGeneralExpenses(
+    periodId: string,
+    rows: ParsedNotionGeneralExpense[],
+  ): Promise<{ created: number }> {
     return apiClient.post<{ created: number }>('/import/notion/general-expenses/confirm', { periodId, rows });
   }
 
-  public confirmCurrentExpenses(periodId: string, rows: ParsedNotionCurrentExpense[]) {
+  public confirmCurrentExpenses(
+    periodId: string,
+    rows: ParsedNotionCurrentExpense[],
+  ): Promise<{ created: number }> {
     return apiClient.post<{ created: number }>('/import/notion/current-expenses/confirm', { periodId, rows });
   }
 
-  public confirmGoals(goalId: string, rows: ParsedNotionGoalEntry[]) {
+  public confirmGoals(goalId: string, rows: ParsedNotionGoalEntry[]): Promise<{ created: number }> {
     return apiClient.post<{ created: number }>('/import/notion/goals/confirm', { goalId, rows });
   }
 }

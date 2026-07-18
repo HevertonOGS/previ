@@ -14,7 +14,7 @@ const TOAST_DURATION = 5000;
 let toasts: ToastItem[] = [];
 let listeners: Array<(toasts: ToastItem[]) => void> = [];
 
-function emit() {
+function emit(): void {
   listeners.forEach((listener) => listener(toasts));
 }
 

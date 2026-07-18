@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { WeeklyBalancesService } from './weekly-balances.service';
+
 import { PrismaService } from '../../prisma/prisma.service';
+
+import { WeeklyBalancesService } from './weekly-balances.service';
 
 describe('WeeklyBalancesService', () => {
   let service: WeeklyBalancesService;

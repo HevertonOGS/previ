@@ -1,7 +1,15 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
 import { Upload, CheckCircle, X } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+
+import { Badge } from '../../../components/ui/badge';
+import { Button } from '../../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Label } from '../../../components/ui/label';
+import { Select } from '../../../components/ui/select';
+import type { Period, Goal } from '../../../lib/types';
+import { goalsService } from '../../../services/goals.service';
 import {
   notionImportService,
   type NotionTableType,
@@ -12,13 +20,6 @@ import {
   type ParsedNotionRow,
 } from '../../../services/notion-import.service';
 import { periodsService } from '../../../services/periods.service';
-import { goalsService } from '../../../services/goals.service';
-import type { Period, Goal } from '../../../lib/types';
-import { Button } from '../../../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
-import { Badge } from '../../../components/ui/badge';
-import { Label } from '../../../components/ui/label';
-import { Select } from '../../../components/ui/select';
 
 const TABLE_OPTIONS: { value: NotionTableType; label: string; description: string }[] = [
   { value: 'incomes', label: 'Receitas', description: 'Tabela de receitas do mês' },
@@ -32,13 +33,13 @@ const MONTH_NAMES = [
   'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez',
 ];
 
-function formatCurrency(v: number) {
+function formatCurrency(v: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 }
 
 type Step = 'select-type' | 'upload' | 'preview' | 'success';
 
-export default function NotionImportPage() {
+export default function NotionImportPage(): JSX.Element {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState<Step>('select-type');
@@ -60,7 +61,7 @@ export default function NotionImportPage() {
     goalsService.list().then((g) => { setGoals(g); if (g.length) setGoalId(g[0].id); }).catch(() => undefined);
   }, []);
 
-  async function handleFile(file: File) {
+  async function handleFile(file: File): Promise<void> {
     setUploading(true);
     try {
       const parsed = await notionImportService.parseFile(file, tableType);
@@ -74,7 +75,7 @@ export default function NotionImportPage() {
 
   const activeRows = rows.filter((r) => !removedIds.has(r.tempId));
 
-  async function handleConfirm() {
+  async function handleConfirm(): Promise<void> {
     setConfirming(true);
     try {
       let result: { created: number };
@@ -162,7 +163,7 @@ export default function NotionImportPage() {
                     variant="ghost"
                     onClick={() => setRemovedIds((prev) => {
                       const next = new Set(prev);
-                      removed ? next.delete(row.tempId) : next.add(row.tempId);
+                      if (removed) next.delete(row.tempId); else next.add(row.tempId);
                       return next;
                     })}
                   >
@@ -203,7 +204,7 @@ export default function NotionImportPage() {
           <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
           <p className="font-medium">Clique ou arraste o CSV exportado do Notion</p>
           <input ref={fileInputRef} type="file" accept=".csv" className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f); }} />
         </div>
 
         {uploading && <p className="text-sm text-center text-muted-foreground">Processando...</p>}
@@ -238,7 +239,7 @@ export default function NotionImportPage() {
   );
 }
 
-function PreviewRow({ type, row }: { type: NotionTableType; row: ParsedNotionRow }) {
+function PreviewRow({ type, row }: { type: NotionTableType; row: ParsedNotionRow }): JSX.Element {
   if (type === 'incomes') {
     const r = row as ParsedNotionIncome;
     return (

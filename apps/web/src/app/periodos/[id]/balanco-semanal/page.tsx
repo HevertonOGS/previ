@@ -1,15 +1,16 @@
-import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { weeklyBalancesService } from '../../../../services/weekly-balances.service';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
+import Link from 'next/link';
+
 import { Badge } from '../../../../components/ui/badge';
 import { Button } from '../../../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
+import { weeklyBalancesService } from '../../../../services/weekly-balances.service';
 
-function formatCurrency(value: string | number) {
+function formatCurrency(value: string | number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value));
 }
 
-function formatDateRange(start: string, end: string) {
+function formatDateRange(start: string, end: string): string {
   const s = new Date(start).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
   const e = new Date(end).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
   return `${s} – ${e}`;
@@ -17,7 +18,7 @@ function formatDateRange(start: string, end: string) {
 
 type Props = { params: Promise<{ id: string }> };
 
-export default async function WeeklyBalancePage({ params }: Props) {
+export default async function WeeklyBalancePage({ params }: Props): Promise<JSX.Element> {
   const { id } = await params;
   let balances: Awaited<ReturnType<typeof weeklyBalancesService.list>> = [];
 

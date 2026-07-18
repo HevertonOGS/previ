@@ -1,14 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Plus, Pencil } from 'lucide-react';
-import { goalsService } from '../../services/goals.service';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import type { GoalEntry } from '../../lib/types';
+import { goalsService } from '../../services/goals.service';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Select } from '../ui/select';
 import {
   Dialog,
   DialogContent,
@@ -18,6 +16,9 @@ import {
   DialogDescription,
   DialogClose,
 } from '../ui/dialog';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Select } from '../ui/select';
 
 const MONTH_LABELS = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -28,7 +29,7 @@ type Props =
   | { mode: 'create'; goalId: string; entry?: undefined }
   | { mode: 'edit'; goalId?: undefined; entry: GoalEntry };
 
-export function GoalEntryFormDialog(props: Props) {
+export function GoalEntryFormDialog(props: Props): JSX.Element {
   const router = useRouter();
   const now = new Date();
 
@@ -47,7 +48,7 @@ export function GoalEntryFormDialog(props: Props) {
   );
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent): Promise<void> {
     e.preventDefault();
     setLoading(true);
     try {

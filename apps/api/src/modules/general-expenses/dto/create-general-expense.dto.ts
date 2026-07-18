@@ -5,61 +5,61 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-v
 export class CreateGeneralExpenseDto {
   @ApiProperty()
   @IsUUID()
-  periodId!: string;
+  public periodId!: string;
 
   @ApiProperty()
   @IsUUID()
-  expenseTypeId!: string;
+  public expenseTypeId!: string;
 
   @ApiProperty()
   @IsUUID()
-  categoryId!: string;
+  public categoryId!: string;
 
   @ApiProperty({ example: 'Rent' })
   @IsString()
   @IsNotEmpty()
-  name!: string;
+  public name!: string;
 
   @ApiPropertyOptional({ example: 'Itaú' })
   @IsString()
   @IsOptional()
-  source?: string;
+  public source?: string;
 
   @ApiProperty({ example: 1500 })
   @Type(() => Number)
   @IsNumber()
   @Min(0)
-  estimatedAmount!: number;
+  public estimatedAmount!: number;
 
   @ApiPropertyOptional({ example: 1500 })
   @Type(() => Number)
   @IsNumber()
   @Min(0)
   @IsOptional()
-  actualAmount?: number;
+  public actualAmount?: number;
 
   @ApiPropertyOptional({ example: '2026-07-10' })
   @IsString()
   @IsOptional()
-  expectedPayAt?: string;
+  public expectedPayAt?: string;
 
   @ApiPropertyOptional({ example: '2026-07-10' })
   @IsString()
   @IsOptional()
-  paidAt?: string;
+  public paidAt?: string;
 
   @ApiPropertyOptional({ example: 'Estimado' })
   @IsString()
   @IsOptional()
-  status?: string;
+  public status?: string;
 
   @ApiPropertyOptional({ example: 'PIX' })
   @IsString()
   @IsOptional()
-  paymentMethod?: string;
+  public paymentMethod?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  notes?: string;
+  public notes?: string;
 }

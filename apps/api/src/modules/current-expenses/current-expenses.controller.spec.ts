@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { CurrentExpensesController } from './current-expenses.controller';
 import { CurrentExpensesService } from './current-expenses.service';
 
@@ -29,7 +30,7 @@ describe('CurrentExpensesController', () => {
     mockService.create.mockResolvedValue(mockExpense);
     const result = await controller.create({
       periodId: 'p-1', expenseTypeId: 't-1', categoryId: 'c-1',
-      name: 'Groceries', amount: 150, paidAt: '2026-07-05', paymentMethod: 'DEBIT' as any,
+      name: 'Groceries', amount: 150, paidAt: '2026-07-05', paymentMethod: 'DEBIT',
     });
     expect(result).toEqual(mockExpense);
   });

@@ -1,16 +1,17 @@
-import Link from 'next/link';
 import { CalendarDays, TrendingUp, ShoppingCart, Target } from 'lucide-react';
-import { periodsService } from '../services/periods.service';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import Link from 'next/link';
+
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { periodsService } from '../services/periods.service';
 
 const MONTH_NAMES = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
 ];
 
-export default async function DashboardPage() {
+export default async function DashboardPage(): Promise<JSX.Element> {
   let periods: Awaited<ReturnType<typeof periodsService.list>> = [];
 
   try {

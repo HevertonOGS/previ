@@ -1,15 +1,17 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import Link from 'next/link';
 import { Pencil } from 'lucide-react';
+import Link from 'next/link';
+import { useMemo, useState } from 'react';
+
 import type { CurrentExpense } from '../../lib/types';
-import { Card, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import { Card, CardContent } from '../ui/card';
+
 import { DeleteItemButton } from './delete-item-button';
 
-function formatCurrency(value: string | number) {
+function formatCurrency(value: string | number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value));
 }
 
@@ -32,7 +34,10 @@ interface CurrentExpensesBoardProps {
   expenses: CurrentExpense[];
 }
 
-export function CurrentExpensesBoard({ periodId, expenses }: CurrentExpensesBoardProps) {
+export function CurrentExpensesBoard({
+  periodId,
+  expenses,
+}: CurrentExpensesBoardProps): JSX.Element {
   const [methodFilter, setMethodFilter] = useState<string | null>(null);
 
   const total = expenses.reduce((acc, e) => acc + Number(e.amount), 0);

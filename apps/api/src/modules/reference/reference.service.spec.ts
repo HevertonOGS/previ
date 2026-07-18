@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ReferenceService } from './reference.service';
+
 import { PrismaService } from '../../prisma/prisma.service';
+
+import { ReferenceService } from './reference.service';
 
 describe('ReferenceService', () => {
   let service: ReferenceService;
-  let prisma: PrismaService;
 
   const mockPrisma = {
     category: {
@@ -42,7 +43,6 @@ describe('ReferenceService', () => {
     }).compile();
 
     service = module.get<ReferenceService>(ReferenceService);
-    prisma = module.get<PrismaService>(PrismaService);
     jest.clearAllMocks();
   });
 

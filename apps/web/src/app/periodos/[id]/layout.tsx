@@ -1,5 +1,5 @@
-import { periodsService } from '../../../services/periods.service';
 import { Badge } from '../../../components/ui/badge';
+import { periodsService } from '../../../services/periods.service';
 
 const MONTH_NAMES = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -11,7 +11,7 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-export default async function PeriodLayout({ children, params }: Props) {
+export default async function PeriodLayout({ children, params }: Props): Promise<JSX.Element> {
   const { id } = await params;
 
   let periodLabel: string | null = null;

@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma, WeeklyBalance } from '@prisma/client';
+
 import { PrismaService } from '../../prisma/prisma.service';
+
 import { CreateWeeklyBalanceDto } from './dto';
+
+export type WeeklyBalanceWithItems = Prisma.WeeklyBalanceGetPayload<{
+  include: { byTypeItems: true; byCategoryItems: true };
+}>;
 
 @Injectable()
 export class WeeklyBalancesService {
-  constructor(private readonly prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
 
-  public async calculate(dto: CreateWeeklyBalanceDto) {
+  public async calculate(dto: CreateWeeklyBalanceDto): Promise<WeeklyBalance> {
     const start = new Date(dto.startDate);
     const end = new Date(dto.endDate);
 
@@ -90,7 +97,7 @@ export class WeeklyBalancesService {
     return weeklyBalance;
   }
 
-  public async findAllByPeriod(periodId: string) {
+  public async findAllByPeriod(periodId: string): Promise<WeeklyBalanceWithItems[]> {
     return this.prisma.weeklyBalance.findMany({
       where: { periodId },
       include: { byTypeItems: true, byCategoryItems: true },
@@ -98,21 +105,21 @@ export class WeeklyBalancesService {
     });
   }
 
-  public async findOne(id: string) {
+  public async findOne(id: string): Promise<WeeklyBalanceWithItems | null> {
     return this.prisma.weeklyBalance.findUnique({
       where: { id },
       include: { byTypeItems: true, byCategoryItems: true },
     });
   }
 
-  public async setBudget(id: string, budget: number) {
+  public async setBudget(id: string, budget: number): Promise<WeeklyBalance> {
     return this.prisma.weeklyBalance.update({
       where: { id },
       data: { budget },
     });
   }
 
-  public async delete(id: string) {
+  public async delete(id: string): Promise<WeeklyBalance> {
     return this.prisma.weeklyBalance.delete({ where: { id } });
   }
 }

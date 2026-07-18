@@ -1,13 +1,14 @@
-import Link from 'next/link';
 import { ArrowLeft, Plus } from 'lucide-react';
+import Link from 'next/link';
+
+import { IncomesBoard } from '../../../../components/features/incomes-board';
+import { Button } from '../../../../components/ui/button';
 import { incomesService } from '../../../../services/incomes.service';
 import { referenceService } from '../../../../services/reference.service';
-import { Button } from '../../../../components/ui/button';
-import { IncomesBoard } from '../../../../components/features/incomes-board';
 
 type Props = { params: Promise<{ id: string }> };
 
-export default async function IncomesPage({ params }: Props) {
+export default async function IncomesPage({ params }: Props): Promise<JSX.Element> {
   const { id } = await params;
   let incomes: Awaited<ReturnType<typeof incomesService.list>> = [];
   let statusOptions: Awaited<ReturnType<typeof referenceService.incomeStatusOptions>> = [];

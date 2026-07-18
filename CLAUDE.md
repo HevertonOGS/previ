@@ -48,7 +48,10 @@ npx nx dev web             # Start frontend (port 4200)
 ## Conventions
 
 - All code and comments in English.
-- **TDD (Test-Driven Development)**: Write tests first, then implement. For each module: create DTOs → write service tests → implement service → write controller tests → implement controller.
+- **TDD (Test-Driven Development)**: Write tests first, then implement, on both backend and frontend.
+  - Backend: for each module, create DTOs → write service tests → implement service → write controller tests → implement controller.
+  - Frontend: for each component/hook/service, write its tests first → then implement it.
+- **Unit tests required on both sides**: Backend (services, controllers) and frontend (components, hooks, services) must all have unit tests implemented. No module or component is considered done without accompanying tests.
 - **Access modifiers**: Always declare explicit `public`, `private`, or `protected` on all class members and methods.
 - **DTO properties**: Always use the definite assignment assertion (`!`) on DTO class properties (e.g., `name!: string`) to satisfy TypeScript strict mode without constructors.
 - NestJS modules follow the pattern: module → controller → service → dto.
